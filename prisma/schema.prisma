@@ -1,0 +1,173 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Application {
+  id           Int                @id @default(autoincrement())
+  userId       Int
+  jobPostingId Int
+  status       Application_status
+  appliedAt    DateTime           @default(now())
+  updatedAt    DateTime
+  resumeUrl    String?
+  coverLetter  String?
+  JobPosting   JobPosting         @relation(fields: [jobPostingId], references: [id])
+  User         User               @relation(fields: [userId], references: [id])
+
+  @@index([jobPostingId], map: "Application_jobPostingId_fkey")
+  @@index([userId], map: "Application_userId_fkey")
+}
+
+model Bookmark {
+  id           Int        @id @default(autoincrement())
+  userId       Int
+  jobPostingId Int
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime
+  JobPosting   JobPosting @relation(fields: [jobPostingId], references: [id])
+  User         User       @relation(fields: [userId], references: [id])
+
+  @@index([jobPostingId], map: "Bookmark_jobPostingId_fkey")
+  @@index([userId], map: "Bookmark_userId_fkey")
+}
+
+model Company {
+  id              Int                 @id @default(autoincrement())
+  name            String
+  location        String
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime
+  address         String?
+  companySize     Company_companySize
+  employeeCount   Int
+  establishedDate DateTime
+  industry        String?
+  introduction    String
+  operatingProfit Float
+  revenue         Float
+  website         String?
+  welfareBenefits String?
+  JobPosting      JobPosting[]
+}
+
+model JobPosting {
+  id                 Int                       @id
+  title              String
+  description        String?
+  location           String
+  companyId          Int
+  closingDate        DateTime
+  jobType            JobPosting_jobType
+  salary             Int
+  requirements       String
+  createdAt          DateTime                  @default(now())
+  updatedAt          DateTime
+  educationLevel     JobPosting_educationLevel
+  isSalaryDetermined Boolean
+  jobPosition        JobPosting_jobPosition
+  region             JobPosting_region
+  views              Int                       @default(0)
+  Application        Application[]
+  Bookmark           Bookmark[]
+  Company            Company                   @relation(fields: [companyId], references: [id])
+
+  @@index([companyId], map: "JobPosting_companyId_fkey")
+}
+
+model User {
+  id             Int           @id @default(autoincrement())
+  email          String        @unique
+  name           String
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime
+  hashedPassword String
+  role           User_role     @default(USER)
+  Application    Application[]
+  Bookmark       Bookmark[]
+}
+
+enum Application_status {
+  PENDING
+  INTERVIEW
+  ACCEPTED
+  REJECTED
+  WITHDRAWN
+}
+
+enum Company_companySize {
+  LARGE_COMPANY
+  SMALL_COMPANY
+  MEDIUM_COMPANY
+  STARTUP
+  PUBLIC
+  OTHER
+}
+
+enum JobPosting_jobType {
+  FULL_TIME
+  CONTRACT
+  INTERN
+}
+
+enum User_role {
+  ADMIN
+  USER
+}
+
+enum JobPosting_educationLevel {
+  HIGH_SCHOOL
+  ASSOCIATES_DEGREE
+  BACHELORS_DEGREE
+  MASTERS_DEGREE
+  DOCTORATE
+  NOT_SPECIFIED
+}
+
+enum JobPosting_jobPosition {
+  PLANNING_STRATEGY
+  MARKETING_PR
+  ACCOUNTING_TAX_FINANCE
+  HR_LABOR_HRD
+  GENERAL_ADMIN_LEGAL
+  IT_DEV_DATA
+  DESIGN
+  SALES_MARKETING_TRADE
+  CUSTOMER_SERVICE_TM
+  PURCHASING_MATERIALS_LOGISTICS
+  PRODUCT_PLANNING_MD
+  DRIVER_TRANSPORT_DELIVERY
+  SERVICE
+  PRODUCTION
+  CONSTRUCTION_ARCHITECTURE
+  MEDICAL
+  RESEARCH_RND
+  EDUCATION
+  MEDIA_CULTURE_SPORTS
+  FINANCE_INSURANCE
+  PUBLIC_WELFARE
+}
+
+enum JobPosting_region {
+  SEOUL
+  GYEONGGI
+  GWANGJU
+  DAEGU
+  DAEJEON
+  BUSAN
+  ULSAN
+  INCHEON
+  GANGWON
+  GYEONGNAM
+  GYEONGBUK
+  JEONNAM
+  JEONBUK
+  CHUNGBUK
+  CHUNGNAM
+  JEJU
+  SEJONG
+}
