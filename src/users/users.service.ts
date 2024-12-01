@@ -1,11 +1,13 @@
 // src/users/users.service.ts
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
-import { User, Prisma } from '@prisma/client';
+import { Injectable } from "@nestjs/common";
+import { PrismaService } from "../prisma/prisma.service";
+import { User, Prisma } from "@prisma/client";
+import { Base64Encoder } from "src/utils/base64Encorder";
+import { CreateUserDto } from "./dto/create-user.dto";
 
 @Injectable()
 export class UsersService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) {}
 
   async getUsers(): Promise<User[]> {
     return this.prisma.user.findMany();
@@ -17,9 +19,17 @@ export class UsersService {
     });
   }
 
-  async createUser(data: Prisma.UserCreateInput): Promise<User> {
+  async createUser(data: CreateUserDto): Promise<User> {
+    // Encode the password using Base64
+    const encodedPassword = Base64Encoder.encode(data.password);
+
+    // Create user with encoded password
     return this.prisma.user.create({
-      data,
+      data: {
+        email: data.email,
+        name: data.name,
+        hashedPassword: encodedPassword,
+      },
     });
   }
 

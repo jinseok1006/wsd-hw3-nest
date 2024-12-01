@@ -1,17 +1,33 @@
-import { Controller, Get, Logger } from "@nestjs/common";
+import {
+  Body,
+  ConflictException,
+  Controller,
+  Get,
+  InternalServerErrorException,
+  Logger,
+  Post,
+} from "@nestjs/common";
+import { PrismaService } from "./prisma/prisma.service";
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 
 // @UseFilters(HttpExceptionFilter)
 @Controller()
 export class AppController {
-  constructor(private readonly logger: Logger) {
-    // this.logger.setContext(AppController.name);
+  constructor(private readonly prisma: PrismaService) {}
+  @Get('prisma-error')
+  async prismaError() {
+    const user = await this.prisma.user.create({
+      data: {
+        email: "hello@test.com",
+        name: "hello",
+        hashedPassword: "hello",
+      },
+    });
+    return user;
   }
 
-  @Get()
-  async getHello() {
-    // this.logger.error('hello')
-    throw new Error("hello error");
-    
-    // return "hello world!";
+  @Get('internal-error') 
+  async internalServerError() {
+    throw new InternalServerErrorException();
   }
 }

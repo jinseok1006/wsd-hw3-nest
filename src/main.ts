@@ -2,9 +2,17 @@ import { NestFactory } from "@nestjs/core";
 import { AppModule } from "./app.module";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import { ValidationPipe } from "@nestjs/common";
+import { HttpExceptionFilter } from "./exception/http-exception.filter";
+import { WINSTON_MODULE_PROVIDER } from "nest-winston";
+import { PrismaExceptionFilter } from "./exception/prisma-exception.filter";
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, { bufferLogs: true });
+  const logger = app.get(WINSTON_MODULE_PROVIDER);
+  app.useGlobalFilters(
+    new HttpExceptionFilter(logger),
+    new PrismaExceptionFilter(logger),
+  );
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,
@@ -13,6 +21,7 @@ async function bootstrap() {
       },
     })
   );
+
   // app.useGlobalInterceptors(new ResponseInterceptor());
 
   // Swagger 설정
@@ -26,12 +35,6 @@ async function bootstrap() {
 
   // Swagger UI를 '/api-docs' 경로에서 제공
   SwaggerModule.setup("api-docs", app, document);
-
-  // 서버 실행
-  // await app.listen(3000, () => {
-  //   console.log('Application is running on: http://localhost:3000');
-  //   console.log('Swagger UI available at: http://localhost:3000/api-docs');
-  // });
 
   await app.listen(3000);
 }

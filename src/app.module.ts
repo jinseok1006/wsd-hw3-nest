@@ -3,20 +3,21 @@ import { UsersModule } from "./users/users.module";
 import { LoggerMiddleware } from "./common/logger.middleware";
 import { AppController } from "./app.controller";
 
-import { ExceptionModule } from "./exception/exception.module";
-import { LoggerModule } from './logger/logger.module';
-import { PrismaModule } from './prisma/prisma.module';
+import { LoggerModule } from "./logger/logger.module";
+import { PrismaModule } from "./prisma/prisma.module";
+import { AuthModule } from "./auth/auth.module";
+// import { winstonLogger } from "./logger/winston.logger";
+import { WinstonModule } from "nest-winston";
+import { consoleTransport } from "./logger/winston.logger";
 
 @Module({
-  imports: [UsersModule, 
-    ExceptionModule,
-     LoggerModule,
-     PrismaModule],
+  imports: [PrismaModule, WinstonModule.forRoot({ transports: [
+    consoleTransport
+  ] })],
   controllers: [AppController],
-  providers: [],
 })
-export class AppModule implements NestModule {
-  configure(consumer: MiddlewareConsumer) {
-    consumer.apply(LoggerMiddleware).forRoutes("*");
-  }
+export class AppModule {
+  // configure(consumer: MiddlewareConsumer) {
+  //   consumer.apply(LoggerMiddleware).forRoutes("*");
+  // }
 }

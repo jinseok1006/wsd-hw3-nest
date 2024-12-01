@@ -41,7 +41,7 @@ model Company {
   name            String
   location        String
   createdAt       DateTime            @default(now())
-  updatedAt       DateTime
+  updatedAt       DateTime            @updatedAt
   address         String?
   companySize     Company_companySize
   employeeCount   Int
@@ -66,7 +66,7 @@ model JobPosting {
   salary             Int
   requirements       String
   createdAt          DateTime                  @default(now())
-  updatedAt          DateTime
+  updatedAt          DateTime                  @updatedAt
   educationLevel     JobPosting_educationLevel
   isSalaryDetermined Boolean
   jobPosition        JobPosting_jobPosition
@@ -84,7 +84,7 @@ model User {
   email          String        @unique
   name           String
   createdAt      DateTime      @default(now())
-  updatedAt      DateTime
+  updatedAt      DateTime      @updatedAt
   hashedPassword String
   role           User_role     @default(USER)
   Application    Application[]
