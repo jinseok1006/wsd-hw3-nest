@@ -3,15 +3,22 @@ import { AppModule } from "./app.module";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import { ValidationPipe } from "@nestjs/common";
 import { HttpExceptionFilter } from "./exception/http-exception.filter";
-import { WINSTON_MODULE_PROVIDER } from "nest-winston";
+import { WINSTON_MODULE_PROVIDER, WinstonModule } from "nest-winston";
 import { PrismaExceptionFilter } from "./exception/prisma-exception.filter";
-
+import * as winston from "winston";
+import { utilities as nestWinstonModuleUtilities } from "nest-winston";
+import { winstonLogger} from "./logger/winston.logger";
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, { bufferLogs: true });
-  const logger = app.get(WINSTON_MODULE_PROVIDER);
+
+
+  const app = await NestFactory.create(AppModule, {
+    bufferLogs: true,
+    logger: winstonLogger
+  });
+  // const logger = app.get(WINSTON_MODULE_PROVIDER);
   app.useGlobalFilters(
-    new HttpExceptionFilter(logger),
-    new PrismaExceptionFilter(logger),
+    new HttpExceptionFilter(winstonLogger),
+    new PrismaExceptionFilter(winstonLogger)
   );
   app.useGlobalPipes(
     new ValidationPipe({

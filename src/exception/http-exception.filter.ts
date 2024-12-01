@@ -36,15 +36,13 @@ export class HttpExceptionFilter implements ExceptionFilter {
     };
 
     // 로깅
-    this.logger.warn({
+    this.logger.error({
       path: req.url,
       method: req.method,
       message: exception.message,
       stack: exception.stack,
+      context: 'HttpExceptionFilter'
     });
-    // this.logger.warn({message: exception.message, stack: exception.stack});
-    // console.log(exception.message);
-    
 
     // 사용자 응답
     const errorResponse = new ErrorResponseDto(

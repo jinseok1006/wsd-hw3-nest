@@ -7,6 +7,12 @@ export class PrismaService
   extends PrismaClient
   implements OnModuleInit, OnModuleDestroy
 {
+  constructor() {
+    super({
+      // errorFormat: "minimal", // 에러 포맷을 최소화하도록 설정
+    });
+  }
+
   async onModuleInit() {
     await this.$connect();
   }

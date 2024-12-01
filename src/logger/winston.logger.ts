@@ -1,6 +1,9 @@
 // src/logger/winston.logger.ts
 import * as winston from "winston";
-import { utilities as nestWinstonModuleUtilities } from "nest-winston";
+import {
+  utilities as nestWinstonModuleUtilities,
+  WinstonModule,
+} from "nest-winston";
 
 // export const winstonLogger = winston.createLogger({
 //   level: 'silly',
@@ -17,13 +20,28 @@ import { utilities as nestWinstonModuleUtilities } from "nest-winston";
 //   ],
 // });
 
-export const consoleTransport = new winston.transports.Console({
-  level: "silly",
-  format: winston.format.combine(
-    winston.format.timestamp(),
-    nestWinstonModuleUtilities.format.nestLike("MyApp", {
-      prettyPrint: true,
-    })
-  ),
-  
+// Custom format similar to common web server log formats
+export const winstonLogger = WinstonModule.createLogger({
+  level: process.env.NODE_ENV === "production" ? "info" : "silly",
+  transports: [
+    // new winston.transports.File({
+    //   filename: "application.log", // 로그를 기록할 파일 이름
+    //   level: process.env.NODE_ENV === "production" ? "info" : "silly", // 환경에 따른 로그 레벨 설정
+    //   format: winston.format.combine(
+    //     winston.format.timestamp(), // 타임스탬프 추가
+    //     winston.format.json() // JSON 형식으로 포맷
+    //   ),
+    // }),
+    new winston.transports.Console({
+      format: winston.format.combine(
+        winston.format.timestamp(),
+        nestWinstonModuleUtilities.format.nestLike("MyApp", {
+          colors: true,
+          prettyPrint: true,
+          processId: true,
+          appName: true,
+        })
+      ),
+    }),
+  ],
 });

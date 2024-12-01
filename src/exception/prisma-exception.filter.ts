@@ -41,16 +41,9 @@ export class PrismaExceptionFilter implements ExceptionFilter {
       path: req.url,
       method: req.method,
       message: exception.message,
-      stack: exception.stack,
+      context: "PrismaExceptionFilter",
     });
-    // console.log(exception.stack);
-
-    // console.log({
-    //   path: req.url,
-    //   method: req.method,
-    //   message: exception.message,
-    //   stack: exception.stack,
-    // });
+    // console.log(exception);
 
     // 사용자 응답
     const errorResponse = new ErrorResponseDto(error, [message], status);

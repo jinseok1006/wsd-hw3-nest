@@ -8,12 +8,12 @@ import { PrismaModule } from "./prisma/prisma.module";
 import { AuthModule } from "./auth/auth.module";
 // import { winstonLogger } from "./logger/winston.logger";
 import { WinstonModule } from "nest-winston";
-import { consoleTransport } from "./logger/winston.logger";
 
 @Module({
-  imports: [PrismaModule, WinstonModule.forRoot({ transports: [
-    consoleTransport
-  ] })],
+  imports: [
+    PrismaModule,
+    // WinstonModule.forRoot({ transports: [consoleTransport] }),
+  ],
   controllers: [AppController],
 })
 export class AppModule {
