@@ -37,46 +37,62 @@ model Bookmark {
 }
 
 model Company {
-  id              Int                 @id @default(autoincrement())
-  name            String
-  location        String
-  createdAt       DateTime            @default(now())
-  updatedAt       DateTime            @updatedAt
-  address         String?
-  companySize     Company_companySize
-  employeeCount   Int
-  establishedDate DateTime
-  industry        String?
-  introduction    String
-  operatingProfit Float
-  revenue         Float
-  website         String?
-  welfareBenefits String?
-  JobPosting      JobPosting[]
+  id           Int      @id @default(autoincrement())
+  name         String
+  introduction String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  address String?
+  website String?
+
+  JobPosting JobPosting[]
+  // location        String
+  // companySize     Company_companySize
+  // employeeCount   Int
+  // industry        String?
+  // establishedDate DateTime
+  // operatingProfit Float
+  // revenue         Float
+  // welfareBenefits String?
 }
 
 model JobPosting {
-  id                 Int                       @id
-  title              String
-  description        String?
-  location           String
-  companyId          Int
-  closingDate        DateTime
-  jobType            JobPosting_jobType
-  salary             Int
-  requirements       String
-  createdAt          DateTime                  @default(now())
-  updatedAt          DateTime                  @updatedAt
-  educationLevel     JobPosting_educationLevel
-  isSalaryDetermined Boolean
-  jobPosition        JobPosting_jobPosition
-  region             JobPosting_region
-  views              Int                       @default(0)
-  Application        Application[]
-  Bookmark           Bookmark[]
-  Company            Company                   @relation(fields: [companyId], references: [id])
+  id                  Int     @id
+  title               String
+  description         String  @db.Text
+  locationDescription String?
+
+  companyId Int
+  Company   Company @relation(fields: [companyId], references: [id])
+
+  // jobType            JobPosting_jobType
+  // requirements       String
+  // educationLevel     JobPosting_educationLevel
+  // isSalaryDetermined Boolean
+  // jobPosition        JobPosting_jobPosition // 이게 enum
+
+  closingDate DateTime
+  salary      Int
+  region      JobPosting_region
+  views       Int               @default(0)
+
+  Application Application[]
+  Bookmark    Bookmark[]
+  techStack   TechStack[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([companyId], map: "JobPosting_companyId_fkey")
+}
+
+model TechStack {
+  id         Int          @id @default(autoincrement())
+  name       String
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+  JobPosting JobPosting[]
 }
 
 model User {
@@ -119,39 +135,6 @@ enum User_role {
   USER
 }
 
-enum JobPosting_educationLevel {
-  HIGH_SCHOOL
-  ASSOCIATES_DEGREE
-  BACHELORS_DEGREE
-  MASTERS_DEGREE
-  DOCTORATE
-  NOT_SPECIFIED
-}
-
-enum JobPosting_jobPosition {
-  PLANNING_STRATEGY
-  MARKETING_PR
-  ACCOUNTING_TAX_FINANCE
-  HR_LABOR_HRD
-  GENERAL_ADMIN_LEGAL
-  IT_DEV_DATA
-  DESIGN
-  SALES_MARKETING_TRADE
-  CUSTOMER_SERVICE_TM
-  PURCHASING_MATERIALS_LOGISTICS
-  PRODUCT_PLANNING_MD
-  DRIVER_TRANSPORT_DELIVERY
-  SERVICE
-  PRODUCTION
-  CONSTRUCTION_ARCHITECTURE
-  MEDICAL
-  RESEARCH_RND
-  EDUCATION
-  MEDIA_CULTURE_SPORTS
-  FINANCE_INSURANCE
-  PUBLIC_WELFARE
-}
-
 enum JobPosting_region {
   SEOUL
   GYEONGGI
@@ -170,4 +153,34 @@ enum JobPosting_region {
   CHUNGNAM
   JEJU
   SEJONG
+}
+
+enum DeveloperPosition {
+  SOFTWARE_ENGINEER
+  SERVER_DEVELOPER
+  WEB_DEVELOPER
+  JAVA_DEVELOPER
+  FRONTEND_DEVELOPER
+  PYTHON_DEVELOPER
+  C_CPP_DEVELOPER
+  MACHINE_LEARNING_ENGINEER
+  DATA_ENGINEER
+  NODEJS_DEVELOPER
+  DEVOPS_ENGINEER
+  ANDROID_DEVELOPER
+  EMBEDDED_DEVELOPER
+  QA_TEST_ENGINEER
+  DATA_SCIENTIST
+  IOS_DEVELOPER
+  SECURITY_ENGINEER
+  HARDWARE_ENGINEER
+  BIG_DATA_ENGINEER
+  BLOCKCHAIN_PLATFORM_ENGINEER
+  GRAPHICS_ENGINEER
+  CROSS_PLATFORM_APP_DEVELOPER
+  CTO
+  CIO
+  ERP_EXPERT
+  BI_ENGINEER
+  VR_ENGINEER
 }
