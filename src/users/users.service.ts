@@ -5,6 +5,7 @@ import { User, Prisma } from "@prisma/client";
 import { Base64Encoder } from "src/utils/base64Encorder";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { UserResponseDto } from "./dto/user-response.dto";
+import { UpdateUserDto } from "./dto/update-user.dto";
 
 @Injectable()
 export class UsersService {
@@ -36,10 +37,16 @@ export class UsersService {
     return new UserResponseDto(user);
   }
 
-  async updateUser(userId: number, updateData: Partial<User>): Promise<UserResponseDto> {
+  async updateUser(userId: number, updateData: UpdateUserDto): Promise<UserResponseDto> {
+    // 
+
     const user = await this.prisma.user.update({
       where: { id: userId },
-      data: updateData,
+      data: {
+        email: updateData.email,
+        name: updateData.name,
+        hashedPassword: updateData.password ? Base64Encoder.encode(updateData.password) : undefined,
+      },
     });
 
     if (!user) {

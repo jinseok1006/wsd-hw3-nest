@@ -5,6 +5,7 @@ import {
   Inject,
   LoggerService,
   Post,
+  Put,
   Request,
   UnauthorizedException,
   UseGuards,
@@ -21,7 +22,10 @@ import { AuthService } from "./auth.service";
 import { RegisterDto } from "./dto/register.dto";
 import { RefreshTokenRequestDto } from "./dto/refresh-token-request.dto";
 import { RefreshTokenResponseDto } from "./dto/refresh-token-response.dto";
+import { UpdateProfileDto } from "./dto/update-profile.dto"; // 추가
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('auth')
 @Controller("auth")
 export class AuthController {
   constructor(
@@ -51,8 +55,10 @@ export class AuthController {
     return new SuccessResponseDto(loginResponse);
   }
 
+  // 프로필 확인
   @UseGuards(JwtAuthGuard) // JwtAuthGuard로 인증된 사용자만 접근 가능
   @Get('profile')
+  @ApiBearerAuth()
   @ApiCommonResponses()
   async getProfile(@Request() req): Promise<SuccessResponseDto<UserResponseDto>> {
     // 인증된 사용자의 ID를 가져오기
@@ -67,6 +73,21 @@ export class AuthController {
 
     // 사용자 정보를 응답 DTO에 맞게 반환
     return new SuccessResponseDto(new UserResponseDto(user));
+  }
+
+  // 프로필 수정
+  @UseGuards(JwtAuthGuard)
+  @Put('profile')
+  @ApiBearerAuth()
+  @ApiCommonResponses()
+  async updateProfile(
+    @Request() req,
+    @Body() body: UpdateProfileDto
+  ): Promise<SuccessResponseDto<UserResponseDto>> {
+    this.logger.debug({ message: '프로필 업데이트 요청', body });
+    const userId = req.user.sub;
+    const updatedUser = await this.authService.updateProfile(userId, body);
+    return new SuccessResponseDto(new UserResponseDto(updatedUser));
   }
 
   @Post('refresh')
