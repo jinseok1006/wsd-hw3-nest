@@ -1,20 +1,26 @@
-import { MiddlewareConsumer, Module, NestModule } from "@nestjs/common";
-import { UsersModule } from "./users/users.module";
-import { LoggerMiddleware } from "./common/logger.middleware";
-import { AppController } from "./app.controller";
+import { Module } from "@nestjs/common";
 
-import { LoggerModule } from "./logger/logger.module";
-import { PrismaModule } from "./prisma/prisma.module";
+// import { LoggerModule } from "./logger/logger.module";
+
 import { AuthModule } from "./auth/auth.module";
 // import { winstonLogger } from "./logger/winston.logger";
 import { WinstonModule } from "nest-winston";
+import { winstonOption } from "./logger/winston.logger";
+// import { LoggerModule } from './logger/logger.module';
+// import { RedisModule } from "./redis/redis.module";
+import { ConfigModule } from "@nestjs/config";
+
 
 @Module({
   imports: [
-    PrismaModule,
-    // WinstonModule.forRoot({ transports: [consoleTransport] }),
+    WinstonModule.forRoot(winstonOption),
+    AuthModule,
+    // RedisModule,
+    ConfigModule.forRoot({
+      isGlobal: true, // 전역 모듈로 설정
+    }),
   ],
-  controllers: [AppController],
+  providers: [],
 })
 export class AppModule {
   // configure(consumer: MiddlewareConsumer) {

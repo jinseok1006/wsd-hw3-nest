@@ -1,21 +1,21 @@
 import {
   ArgumentsHost,
   Catch,
-  ConflictException,
   ExceptionFilter,
   HttpException,
   Inject,
   InternalServerErrorException,
-  LoggerService,
 } from "@nestjs/common";
-import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
-import { WINSTON_MODULE_PROVIDER } from "nest-winston";
+import { LoggerService } from "@nestjs/common";
+
+import { WINSTON_MODULE_NEST_PROVIDER } from "nest-winston";
 import { ErrorResponseDto } from "src/common/response.dto";
 
 @Catch()
 export class HttpExceptionFilter implements ExceptionFilter {
+  // private readonly logger = winstonLogger;
   constructor(
-    @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: LoggerService
+    @Inject(WINSTON_MODULE_NEST_PROVIDER) private readonly logger: LoggerService
   ) {}
 
   catch(exception: Error, host: ArgumentsHost): any {
@@ -24,6 +24,15 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const res = ctx.getResponse();
 
     // console.log(exception);
+
+    // 로깅
+    this.logger.error({
+      path: req.url,
+      method: req.method,
+      message: exception.message,
+      stack: exception.stack,
+      context: "HttpExceptionFilter",
+    });
 
     if (!(exception instanceof HttpException)) {
       exception = new InternalServerErrorException();
@@ -34,15 +43,6 @@ export class HttpExceptionFilter implements ExceptionFilter {
       message: string[] | string;
       statusCode: number;
     };
-
-    // 로깅
-    this.logger.error({
-      path: req.url,
-      method: req.method,
-      message: exception.message,
-      stack: exception.stack,
-      context: 'HttpExceptionFilter'
-    });
 
     // 사용자 응답
     const errorResponse = new ErrorResponseDto(
