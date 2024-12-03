@@ -6,7 +6,6 @@ import { JwtModule } from "@nestjs/jwt";
 import { AuthService } from "./auth.service";
 import { ConfigModule } from "@nestjs/config";
 import { TokenService } from "./token.service";
-import { WINSTON_MODULE_NEST_PROVIDER } from "nest-winston";
 
 @Module({
   imports: [
@@ -18,14 +17,7 @@ import { WINSTON_MODULE_NEST_PROVIDER } from "nest-winston";
     }),
   ],
   controllers: [AuthController],
-  providers: [
-    AuthService,
-    TokenService,
-    {
-      provide: WINSTON_MODULE_NEST_PROVIDER,
-      useValue: console, // 실제로는 winston logger를 설정해야 합니다.
-    },
-  ],
+  providers: [AuthService, TokenService],
   exports: [AuthService],
 })
 export class AuthModule {}
