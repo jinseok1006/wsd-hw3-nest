@@ -9,7 +9,6 @@ import {
 import { JwtService } from "@nestjs/jwt";
 import { LoginDto } from "./dto/login.dto";
 import { RefreshTokenRequestDto } from "./dto/refresh-token-request.dto";
-import { RefreshTokenResponseDto } from "./dto/refresh-token-response.dto";
 import { LoginResponseDto } from "./dto/login-response.dto";
 import { UsersService } from "src/users/users.service";
 import { PrismaService } from "src/prisma/prisma.service";
@@ -17,7 +16,7 @@ import { UpdateProfileDto } from "./dto/update-profile.dto";
 import { UserResponseDto } from "src/users/dto/user-response.dto";
 import { WINSTON_MODULE_NEST_PROVIDER } from "nest-winston";
 import { Base64Encoder } from "src/utils/base64Encorder";
-import { TokenService } from './token.service';
+import { TokenService } from 'src/token/token.service';
 
 @Injectable()
 export class AuthService {

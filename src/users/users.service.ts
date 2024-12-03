@@ -1,7 +1,7 @@
 // src/users/users.service.ts
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service";
-import { User, Prisma } from "@prisma/client";
+import { User } from "@prisma/client";
 import { Base64Encoder } from "src/utils/base64Encorder";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { UserResponseDto } from "./dto/user-response.dto";

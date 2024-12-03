@@ -15,7 +15,7 @@ import { SuccessResponseDto } from "src/common/response.dto";
 import { UserResponseDto } from "src/users/dto/user-response.dto";
 import { UsersService } from "src/users/users.service";
 import { LoginResponseDto } from "./dto/login-response.dto";
-import { JwtAuthGuard } from "./jwt-auth.guard";
+import { JwtAuthGuard } from "../common/jwt-auth.guard";
 import { WINSTON_MODULE_NEST_PROVIDER } from "nest-winston";
 import { LoginDto } from "./dto/login.dto";
 import { AuthService } from "./auth.service";

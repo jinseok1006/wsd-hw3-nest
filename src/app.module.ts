@@ -9,16 +9,17 @@ import { winstonOption } from "./logger/winston.logger";
 // import { LoggerModule } from './logger/logger.module';
 // import { RedisModule } from "./redis/redis.module";
 import { ConfigModule } from "@nestjs/config";
+import { TokenModule } from './token/token.module';
 
 
 @Module({
   imports: [
-    WinstonModule.forRoot(winstonOption),
-    AuthModule,
-    // RedisModule,
     ConfigModule.forRoot({
       isGlobal: true, // 전역 모듈로 설정
     }),
+    WinstonModule.forRoot(winstonOption),
+    AuthModule,
+    TokenModule,
   ],
   providers: [],
 })
