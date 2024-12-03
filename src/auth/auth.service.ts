@@ -4,7 +4,6 @@ import {
   Injectable,
   LoggerService,
   Request,
-  UnauthorizedException,
 } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { LoginDto } from "./dto/login.dto";
@@ -12,10 +11,9 @@ import { RefreshTokenRequestDto } from "./dto/refresh-token-request.dto";
 import { LoginResponseDto } from "./dto/login-response.dto";
 import { UsersService } from "src/users/users.service";
 import { PrismaService } from "src/prisma/prisma.service";
-import { UpdateProfileDto } from "./dto/update-profile.dto";
 import { UserResponseDto } from "src/users/dto/user-response.dto";
 import { WINSTON_MODULE_NEST_PROVIDER } from "nest-winston";
-import { Base64Encoder } from "src/utils/base64Encorder";
+import { Base64Encoder } from "src/utils/base64Encoder";
 import { TokenService } from "src/token/token.service";
 
 // 커스텀 예외 클래스 임포트
