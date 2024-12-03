@@ -13,7 +13,7 @@ model Application {
   jobPostingId Int
   status       Application_status
   appliedAt    DateTime           @default(now())
-  updatedAt    DateTime
+  updatedAt    DateTime           @updatedAt
   resumeUrl    String?
   coverLetter  String?
   JobPosting   JobPosting         @relation(fields: [jobPostingId], references: [id])
@@ -32,6 +32,7 @@ model Bookmark {
   JobPosting   JobPosting @relation(fields: [jobPostingId], references: [id])
   User         User       @relation(fields: [userId], references: [id])
 
+  @@unique([userId, jobPostingId], map: "Bookmark_userJob_unique")
   @@index([jobPostingId], map: "Bookmark_jobPostingId_fkey")
   @@index([userId], map: "Bookmark_userId_fkey")
 }
@@ -47,40 +48,28 @@ model Company {
   website String?
 
   JobPosting JobPosting[]
-  // location        String
-  // companySize     Company_companySize
-  // employeeCount   Int
-  // industry        String?
-  // establishedDate DateTime
-  // operatingProfit Float
-  // revenue         Float
-  // welfareBenefits String?
 }
 
 model JobPosting {
   id                  Int     @id
-  title               String
+  title               String //타이틀이랑 포지션이랑 같음
   description         String  @db.Text
   locationDescription String?
+
+  image        String?
+  closingDate  DateTime
+  salary       Int
+  region       JobPosting_region
+  techStack    TechStack[]
+  minimumYears Int               @default(0) // 최소 연차 필드 추가
 
   companyId Int
   Company   Company @relation(fields: [companyId], references: [id])
 
-  // jobType            JobPosting_jobType
-  // requirements       String
-  // educationLevel     JobPosting_educationLevel
-  // isSalaryDetermined Boolean
-  // jobPosition        JobPosting_jobPosition // 이게 enum
-
-  closingDate DateTime
-  salary      Int
-  region      JobPosting_region
-  views       Int               @default(0)
-
   Application Application[]
   Bookmark    Bookmark[]
-  techStack   TechStack[]
 
+  views     Int      @default(0)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -89,7 +78,7 @@ model JobPosting {
 
 model TechStack {
   id         Int          @id @default(autoincrement())
-  name       String
+  name       String       @unique
   createdAt  DateTime     @default(now())
   updatedAt  DateTime     @updatedAt
   JobPosting JobPosting[]
@@ -109,26 +98,24 @@ model User {
 
 enum Application_status {
   PENDING
-  INTERVIEW
   ACCEPTED
   REJECTED
-  WITHDRAWN
 }
 
-enum Company_companySize {
-  LARGE_COMPANY
-  SMALL_COMPANY
-  MEDIUM_COMPANY
-  STARTUP
-  PUBLIC
-  OTHER
-}
+// enum Company_companySize {
+//   LARGE_COMPANY
+//   SMALL_COMPANY
+//   MEDIUM_COMPANY
+//   STARTUP
+//   PUBLIC
+//   OTHER
+// }
 
-enum JobPosting_jobType {
-  FULL_TIME
-  CONTRACT
-  INTERN
-}
+// enum JobPosting_jobType {
+//   FULL_TIME
+//   CONTRACT
+//   INTERN
+// }
 
 enum User_role {
   ADMIN
