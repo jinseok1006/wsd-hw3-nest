@@ -4,28 +4,27 @@ import { UsersModule } from "src/users/users.module";
 import { PrismaModule } from "src/prisma/prisma.module";
 import { JwtModule } from "@nestjs/jwt";
 import { AuthService } from "./auth.service";
-import { ConfigModule } from "@nestjs/config";
-import { TokenService } from "./token.service";
-import { WINSTON_MODULE_NEST_PROVIDER } from "nest-winston";
+import { TokenModule } from "src/token/token.module";
+import { ConfigModule, ConfigService } from "@nestjs/config";
 
 @Module({
   imports: [
     PrismaModule,
     UsersModule,
-    ConfigModule,
-    JwtModule.register({
-      secret: process.env.JWT_SECRET,
+    TokenModule,
+    JwtModule.registerAsync({
+      imports: [ConfigModule], // ConfigModule 필요
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => ({
+        secret: configService.get<string>("JWT_SECRET"), // ConfigService를 통해 환경 변수 가져오기
+        signOptions: {
+          expiresIn: "1h",
+        },
+      }),
     }),
   ],
   controllers: [AuthController],
-  providers: [
-    AuthService,
-    TokenService,
-    {
-      provide: WINSTON_MODULE_NEST_PROVIDER,
-      useValue: console, // 실제로는 winston logger를 설정해야 합니다.
-    },
-  ],
+  providers: [AuthService],
   exports: [AuthService],
 })
 export class AuthModule {}

@@ -5,6 +5,7 @@ import {
   Inject,
   LoggerService,
   Post,
+  Put,
   Request,
   UnauthorizedException,
   UseGuards,
@@ -14,14 +15,17 @@ import { SuccessResponseDto } from "src/common/response.dto";
 import { UserResponseDto } from "src/users/dto/user-response.dto";
 import { UsersService } from "src/users/users.service";
 import { LoginResponseDto } from "./dto/login-response.dto";
-import { JwtAuthGuard } from "./jwt-auth.guard";
+import { JwtAuthGuard } from "../common/jwt-auth.guard";
 import { WINSTON_MODULE_NEST_PROVIDER } from "nest-winston";
 import { LoginDto } from "./dto/login.dto";
 import { AuthService } from "./auth.service";
 import { RegisterDto } from "./dto/register.dto";
 import { RefreshTokenRequestDto } from "./dto/refresh-token-request.dto";
 import { RefreshTokenResponseDto } from "./dto/refresh-token-response.dto";
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { UpdateUserDto } from "src/users/dto/update-user.dto"; // UpdateUserDto 임포트
 
+@ApiTags('auth')
 @Controller("auth")
 export class AuthController {
   constructor(
@@ -51,8 +55,10 @@ export class AuthController {
     return new SuccessResponseDto(loginResponse);
   }
 
-  @UseGuards(JwtAuthGuard) // JwtAuthGuard로 인증된 사용자만 접근 가능
+  // 프로필 확인
   @Get('profile')
+  @UseGuards(JwtAuthGuard) // JwtAuthGuard로 인증된 사용자만 접근 가능
+  @ApiBearerAuth()
   @ApiCommonResponses()
   async getProfile(@Request() req): Promise<SuccessResponseDto<UserResponseDto>> {
     // 인증된 사용자의 ID를 가져오기
@@ -67,6 +73,21 @@ export class AuthController {
 
     // 사용자 정보를 응답 DTO에 맞게 반환
     return new SuccessResponseDto(new UserResponseDto(user));
+  }
+
+  // 프로필 수정
+  @Put('profile')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiCommonResponses()
+  async updateProfile(
+    @Request() req,
+    @Body() body: UpdateUserDto // UpdateUserDto 사용
+  ): Promise<SuccessResponseDto<UserResponseDto>> {
+    this.logger.debug({ message: '프로필 업데이트 요청', body });
+    const userId = req.user.sub;
+    const updatedUser = await this.usersService.updateUser(userId, body);
+    return new SuccessResponseDto(new UserResponseDto(updatedUser));
   }
 
   @Post('refresh')
