@@ -13,7 +13,7 @@ model Application {
   jobPostingId Int
   status       Application_status
   appliedAt    DateTime           @default(now())
-  updatedAt    DateTime
+  updatedAt    DateTime           @updatedAt
   resumeUrl    String?
   coverLetter  String?
   JobPosting   JobPosting         @relation(fields: [jobPostingId], references: [id])
@@ -28,7 +28,7 @@ model Bookmark {
   userId       Int
   jobPostingId Int
   createdAt    DateTime   @default(now())
-  updatedAt    DateTime
+  updatedAt    DateTime   @updatedAt
   JobPosting   JobPosting @relation(fields: [jobPostingId], references: [id])
   User         User       @relation(fields: [userId], references: [id])
 
@@ -104,7 +104,7 @@ model User {
   email          String          @unique
   name           String
   createdAt      DateTime        @default(now())
-  updatedAt      DateTime
+  updatedAt      DateTime        @updatedAt
   hashedPassword String
   role           User_role       @default(USER)
   Application    Application[]
