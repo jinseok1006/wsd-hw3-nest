@@ -13,7 +13,7 @@ model Application {
   jobPostingId Int
   status       Application_status
   appliedAt    DateTime           @default(now())
-  updatedAt    DateTime           @updatedAt
+  updatedAt    DateTime
   resumeUrl    String?
   coverLetter  String?
   JobPosting   JobPosting         @relation(fields: [jobPostingId], references: [id])
@@ -38,42 +38,57 @@ model Bookmark {
 }
 
 model Company {
-  id           Int      @id @default(autoincrement())
-  name         String
-  introduction String
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  id            Int             @id
+  name          String          @unique
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  description   String?         @db.Text
+  JobPosting    JobPosting[]
+  CompanyReview CompanyReview[]
+}
 
-  address String?
-  website String?
-
-  JobPosting JobPosting[]
+model CompanyReview {
+  id        Int      @id @default(autoincrement())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    Int
+  company   Company  @relation(fields: [companyId], references: [id])
+  companyId Int
+  rating    Int      @default(0) // 1~5 사이의 평점
+  content   String // 리뷰 내용
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model JobPosting {
-  id                  Int     @id
-  title               String //타이틀이랑 포지션이랑 같음
-  description         String  @db.Text
+  id                  Int                 @id
+  title               String
+  description         String              @db.Text
+  hireRound           String?             @db.Text
+  benefits            String?             @db.Text
+  companyId           Int
+  closingDate         DateTime?
+  salary              Int
+  createdAt           DateTime            @default(now())
+  updatedAt           DateTime            @updatedAt
+  region              JobPosting_region
+  views               Int                 @default(0)
   locationDescription String?
-
-  image        String?
-  closingDate  DateTime
-  salary       Int
-  region       JobPosting_region
-  techStack    TechStack[]
-  minimumYears Int               @default(0) // 최소 연차 필드 추가
-
-  companyId Int
-  Company   Company @relation(fields: [companyId], references: [id])
-
-  Application Application[]
-  Bookmark    Bookmark[]
-
-  views     Int      @default(0)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  annualFrom          Int                 @default(0)
+  annualTo            Int                 @default(0)
+  image               String?
+  DeveloperPosition   DeveloperPosition[]
+  Application         Application[]
+  Bookmark            Bookmark[]
+  Company             Company             @relation(fields: [companyId], references: [id])
+  TechStack           TechStack[]
 
   @@index([companyId], map: "JobPosting_companyId_fkey")
+}
+
+model DeveloperPosition {
+  id       Int          @id
+  name     String       @unique // Enum 값을 문자열로 저장
+  postings JobPosting[] // 다대다 관계
 }
 
 model TechStack {
@@ -85,15 +100,16 @@ model TechStack {
 }
 
 model User {
-  id             Int           @id @default(autoincrement())
-  email          String        @unique
+  id             Int             @id @default(autoincrement())
+  email          String          @unique
   name           String
-  createdAt      DateTime      @default(now())
-  updatedAt      DateTime      @updatedAt
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime
   hashedPassword String
-  role           User_role     @default(USER)
+  role           User_role       @default(USER)
   Application    Application[]
   Bookmark       Bookmark[]
+  CompanyReview  CompanyReview[]
 }
 
 enum Application_status {
@@ -101,21 +117,6 @@ enum Application_status {
   ACCEPTED
   REJECTED
 }
-
-// enum Company_companySize {
-//   LARGE_COMPANY
-//   SMALL_COMPANY
-//   MEDIUM_COMPANY
-//   STARTUP
-//   PUBLIC
-//   OTHER
-// }
-
-// enum JobPosting_jobType {
-//   FULL_TIME
-//   CONTRACT
-//   INTERN
-// }
 
 enum User_role {
   ADMIN
@@ -140,34 +141,4 @@ enum JobPosting_region {
   CHUNGNAM
   JEJU
   SEJONG
-}
-
-enum DeveloperPosition {
-  SOFTWARE_ENGINEER
-  SERVER_DEVELOPER
-  WEB_DEVELOPER
-  JAVA_DEVELOPER
-  FRONTEND_DEVELOPER
-  PYTHON_DEVELOPER
-  C_CPP_DEVELOPER
-  MACHINE_LEARNING_ENGINEER
-  DATA_ENGINEER
-  NODEJS_DEVELOPER
-  DEVOPS_ENGINEER
-  ANDROID_DEVELOPER
-  EMBEDDED_DEVELOPER
-  QA_TEST_ENGINEER
-  DATA_SCIENTIST
-  IOS_DEVELOPER
-  SECURITY_ENGINEER
-  HARDWARE_ENGINEER
-  BIG_DATA_ENGINEER
-  BLOCKCHAIN_PLATFORM_ENGINEER
-  GRAPHICS_ENGINEER
-  CROSS_PLATFORM_APP_DEVELOPER
-  CTO
-  CIO
-  ERP_EXPERT
-  BI_ENGINEER
-  VR_ENGINEER
 }
