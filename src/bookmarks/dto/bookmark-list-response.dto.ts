@@ -6,14 +6,16 @@ import { JobSummaryDto } from "src/jobs/dto/get-jobs-response.dto";
 //     job: JobSummaryDto;
 //     createdAt: string; // ISO format
 //   }
-  
-
-export class  BookmarkListResponseDto {
-  jobs: JobSummaryDto[];
+class BookmarkListDto {
+  id: number;
+  JobPosting: JobSummaryDto;
+}
+export class BookmarkListResponseDto {
+  bookmarks: BookmarkListDto[];
   pagination: PaginationDto;
 
-  constructor(jobs: JobSummaryDto[], pagination: PaginationDto) {
-    this.jobs = jobs;
+  constructor(bookmarks: BookmarkListDto[], pagination: PaginationDto) {
+    this.bookmarks = bookmarks;
     this.pagination = pagination;
   }
 }

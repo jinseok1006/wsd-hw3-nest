@@ -1,9 +1,8 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service";
 import { CreateBookmarkDto } from "./dto/create-bookmark.dto";
 import { BookmarkListQueryDto } from "./dto/bookmark-list-query.dto";
 import { BookmarkResponseDto } from "./dto/bookmark-response.dto";
-import { JobSummaryDto } from "src/jobs/dto/get-jobs-response.dto";
 import { BookmarkListResponseDto } from "./dto/bookmark-list-response.dto";
 import { PaginationDto } from "src/common/response.dto";
 
@@ -17,20 +16,29 @@ export class BookmarksService {
     createBookmarkDto: CreateBookmarkDto
   ): Promise<BookmarkResponseDto> {
     const { jobPostingId } = createBookmarkDto;
-
+  
+    // Check if the job posting exists
+    const jobPostingExists = await this.prisma.jobPosting.findUnique({
+      where: { id: jobPostingId },
+    });
+  
+    if (!jobPostingExists) {
+      throw new NotFoundException(`${jobPostingId}번 채용공고가 존재하지 않습니다.`);
+    }
+  
     // Check if the bookmark already exists
     const existingBookmark = await this.prisma.bookmark.findUnique({
       where: {
         userId_jobPostingId: { userId, jobPostingId },
       },
     });
-
+  
     if (existingBookmark) {
       // If it exists, remove it (unbookmark)
       await this.prisma.bookmark.delete({
         where: { id: existingBookmark.id },
       });
-
+  
       return {
         status: "success",
         message: "Bookmark removed successfully",
@@ -44,7 +52,7 @@ export class BookmarksService {
           jobPostingId,
         },
       });
-
+  
       return {
         status: "success",
         message: "Bookmark added successfully",
@@ -93,24 +101,11 @@ export class BookmarksService {
       }),
     ]);
 
-    // Map the results to the response DTO
-    // const data = bookmarks.map((bookmark) => ({
-    //   jobId: bookmark.jobPostingId,
-    //   title: bookmark.JobPosting.title,
-    //   createdAt: bookmark.createdAt.toISOString(),
-    // }));
-    return bookmarks;
-    // return new BookmarkListResponseDto(
-    //   bookmarks,
-    //   new PaginationDto(page, totalItems, Math.ceil(totalItems / limit))
-    // );
-    // return {
-    //   bookmarks,
-    //   pagination: {
-    //     currentPage: page,
-    //     totalPages: Math.ceil(totalItems / limit),
-    //     totalItems,
-    //   },
-    // };
+
+    return new BookmarkListResponseDto(
+      bookmarks,
+      new PaginationDto(page, totalItems, Math.ceil(totalItems / limit))
+    );
+
   }
 }
