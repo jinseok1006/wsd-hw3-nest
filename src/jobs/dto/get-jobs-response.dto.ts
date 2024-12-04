@@ -11,6 +11,10 @@ export class JobSummaryDto {
     id: number;
     name: string;
   };
+  Bookmark: {
+    id: number;
+    jobPostingId: number;
+  }[];
   // 북마크 여부
 }
 
