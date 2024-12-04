@@ -10,6 +10,8 @@ import { winstonOption } from "./logger/winston.logger";
 // import { RedisModule } from "./redis/redis.module";
 import { ConfigModule } from "@nestjs/config";
 import { TokenModule } from './token/token.module';
+import { JobsModule } from './jobs/jobs.module';
+import { BookmarksModule } from './bookmarks/bookmarks.module';
 
 
 @Module({
@@ -17,9 +19,11 @@ import { TokenModule } from './token/token.module';
     ConfigModule.forRoot({
       isGlobal: true, // 전역 모듈로 설정
     }),
-    WinstonModule.forRoot(winstonOption),
+    WinstonModule.forRoot(winstonOption), // 토큰을 이용한 전역 Provider
     AuthModule,
     TokenModule,
+    JobsModule,
+    BookmarksModule,
   ],
   providers: [],
 })
