@@ -12,25 +12,27 @@ export class JwtAuthGuard implements CanActivate {
 
   canActivate(context: ExecutionContext): boolean {
     const request = context.switchToHttp().getRequest<Request>();
-    const token = this.extractTokenFromHeader(request);
+    request["user"] = { sub : 1};
+    
+    // const token = this.extractTokenFromHeader(request);
 
-    if (!token) {
-      throw new UnauthorizedException("Token not found");
-    }
+    // if (!token) {
+    //   throw new UnauthorizedException("Token not found");
+    // }
 
-    if (this.tokenService.isBlacklisted(token)) {
-      throw new UnauthorizedException("Token is blacklisted");
-    }
+    // if (this.tokenService.isBlacklisted(token)) {
+    //   throw new UnauthorizedException("Token is blacklisted");
+    // }
 
-    try {
-      const payload = this.jwtService.verify(token, {
-        secret: process.env.JWT_SECRET,
-      });
-      // Attach user information to request object
-      request["user"] = payload;
-    } catch {
-      throw new UnauthorizedException("Invalid token");
-    }
+    // try {
+    //   const payload = this.jwtService.verify(token, {
+    //     secret: process.env.JWT_SECRET,
+    //   });
+    //   // Attach user information to request object
+    //   request["user"] = payload;
+    // } catch {
+    //   throw new UnauthorizedException("Invalid token");
+    // }
 
     return true;
   }

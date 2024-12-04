@@ -10,9 +10,12 @@ import { mapRegion } from "./regionMapper";
 @Injectable()
 export class JobsService {
   constructor(private readonly prisma: PrismaService) {}
-
+  3;
   // 공고 목록 조회
-  async findAll(query: GetJobsQueryDto): Promise<GetJobsResponseDto> {
+  async findAll(
+    userId: number,
+    query: GetJobsQueryDto
+  ): Promise<GetJobsResponseDto> {
     const {
       page = 1,
       size = 20,
@@ -89,6 +92,15 @@ export class JobsService {
             name: true,
           },
         },
+        Bookmark: {
+          where: {
+            userId,
+          },
+          select: {
+            id: true,
+            jobPostingId: true,
+          },
+        },
       },
     });
 
@@ -103,7 +115,7 @@ export class JobsService {
   }
 
   // 공고 상세 조회
-  async findOne(id: number): Promise<GetJobsDetailResponseDto> {
+  async findOne(userId: number, id: number): Promise<GetJobsDetailResponseDto> {
     const job = await this.prisma.jobPosting.update({
       where: { id },
       data: { views: { increment: 1 } },
@@ -156,6 +168,12 @@ export class JobsService {
           select: {
             id: true,
             name: true,
+          },
+        },
+        Bookmark: {
+          select: {
+            id: true,
+            jobPostingId: true,
           },
         },
       },

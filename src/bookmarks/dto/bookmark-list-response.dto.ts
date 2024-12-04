@@ -1,6 +1,6 @@
 import { PaginationDto } from "src/common/response.dto";
 
-export class JobSummaryDto {
+export class JobPostingSummaryDto {
   id: number; // 공고 ID
   image: string;
   title: string; // 공고 제목
@@ -11,19 +11,19 @@ export class JobSummaryDto {
     id: number;
     name: string;
   };
-  Bookmark: {
-    id: number;
-    jobPostingId: number;
-  }[];
-  // 북마크 여부
 }
 
-export class GetJobsResponseDto {
-  jobs: JobSummaryDto[]; // 공고 요약 리스트
+class BookmarkListDto {
+  id: number;
+  JobPosting: JobPostingSummaryDto;
+}
+
+export class BookmarkListResponseDto {
+  bookmarks: BookmarkListDto[];
   pagination: PaginationDto;
 
-  constructor(jobs: JobSummaryDto[], pagination: PaginationDto) {
-    this.jobs = jobs;
+  constructor(bookmarks: BookmarkListDto[], pagination: PaginationDto) {
+    this.bookmarks = bookmarks;
     this.pagination = pagination;
   }
 }
