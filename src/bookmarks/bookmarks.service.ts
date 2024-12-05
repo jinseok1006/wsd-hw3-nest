@@ -3,66 +3,67 @@ import { PrismaService } from "../prisma/prisma.service";
 import { CreateBookmarkDto } from "./dto/create-bookmark.dto";
 import { BookmarkListQueryDto } from "./dto/bookmark-list-query.dto";
 import { BookmarkResponseDto } from "./dto/bookmark-response.dto";
-import { BookmarkListResponseDto } from "./dto/bookmark-list-response.dto";
-import { PaginationDto } from "src/common/response.dto";
+import { BookmarkListDto } from "./dto/bookmark-list-response.dto";
+import { PaginatedData, PaginationDto } from "src/common/response.dto";
 
 @Injectable()
 export class BookmarksService {
   constructor(private readonly prisma: PrismaService) {}
 
-  // 북마크 추가/제거 (Toggle)
   async toggleBookmark(
     userId: number,
     createBookmarkDto: CreateBookmarkDto
   ): Promise<BookmarkResponseDto> {
     const { jobPostingId } = createBookmarkDto;
-  
+
     // Check if the job posting exists
     const jobPostingExists = await this.prisma.jobPosting.findUnique({
       where: { id: jobPostingId },
     });
-  
+
     if (!jobPostingExists) {
-      throw new NotFoundException(`${jobPostingId}번 채용공고가 존재하지 않습니다.`);
+      throw new NotFoundException(
+        `${jobPostingId}번 채용공고가 존재하지 않습니다.`
+      );
     }
-  
+
     // Check if the bookmark already exists
     const existingBookmark = await this.prisma.bookmark.findUnique({
       where: {
         userId_jobPostingId: { userId, jobPostingId },
       },
     });
-  
+
     if (existingBookmark) {
       // If it exists, remove it (unbookmark)
       await this.prisma.bookmark.delete({
         where: { id: existingBookmark.id },
       });
-  
+
       return {
-        status: "success",
-        message: "Bookmark removed successfully",
-        bookmarked: false,
+        id: existingBookmark.id,
+        status: "unbookmarked",
       };
     } else {
       // Otherwise, create a new bookmark
-      await this.prisma.bookmark.create({
+      const newBookmark = await this.prisma.bookmark.create({
         data: {
           userId,
           jobPostingId,
         },
       });
-  
+
       return {
-        status: "success",
-        message: "Bookmark added successfully",
-        bookmarked: true,
+        id: newBookmark.id,
+        status: "bookmarked",
       };
     }
   }
-
   // 북마크 목록 조회
-  async getBookmarks(userId: number, query: BookmarkListQueryDto) {
+  async getBookmarks(
+    userId: number,
+    query: BookmarkListQueryDto
+  ): Promise<PaginatedData<BookmarkListDto>> {
     const { page = 1, limit = 20, sort = "latest" } = query;
 
     // Calculate pagination offset
@@ -100,12 +101,11 @@ export class BookmarksService {
         },
       }),
     ]);
-
-
-    return new BookmarkListResponseDto(
-      bookmarks,
-      new PaginationDto(page, totalItems, Math.ceil(totalItems / limit))
+    const pagination = new PaginationDto(
+      page,
+      totalItems,
+      Math.ceil(totalItems / limit)
     );
-
+    return { data: bookmarks, pagination };
   }
 }

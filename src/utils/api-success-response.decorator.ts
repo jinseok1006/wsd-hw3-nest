@@ -7,24 +7,31 @@ import { SuccessResponseDto } from "src/common/response.dto";
  * @param dto 내부 제네릭 타입 (예: LoginResponseDto)
  * @param description 응답 설명
  * @param includePagination Pagination 필드 포함 여부
+ * @param isArray 배열 여부 (기본값: false)
  */
 export function ApiSuccessResponse(
   dto: any,
   description: string,
-  includePagination = false
+  includePagination = false,
 ) {
   return applyDecorators(
-    ApiExtraModels(dto), // 내부 모델을 Swagger에 등록
+    ApiExtraModels(dto),
+    ApiExtraModels(SuccessResponseDto),
     ApiOkResponse({
       description,
       schema: {
         allOf: [
-          { $ref: getSchemaPath(SuccessResponseDto) }, // SuccessResponseDto의 스키마 참조
+          { $ref: getSchemaPath(SuccessResponseDto) },
           {
             properties: {
-              result: { $ref: getSchemaPath(dto) }, // 내부 제네릭 타입(DTO)을 참조
+              result: includePagination
+                ? {
+                    type: "array",
+                    items: { $ref: getSchemaPath(dto) },
+                  }
+                : { $ref: getSchemaPath(dto) },
               ...(includePagination && {
-                pagination: { $ref: getSchemaPath("PaginationDto") }, // Pagination 필드 동적 추가
+                pagination: { $ref: getSchemaPath("PaginationDto") },
               }),
             },
           },
