@@ -22,7 +22,7 @@ export class ReviewsService {
    * @param userId 리뷰를 작성한 사용자 ID
    * @param createReviewDto 리뷰 생성에 필요한 데이터 (companyId, rating, content)
    * @returns 생성된 리뷰 정보
-   * @throws Error 존재하지 않는 회사에 대한 리뷰 생성 시 예외 발생
+   * @throws NotFoundException 존재하지 않는 회사에 대한 리뷰 생성 시 예외 발생
    */
   async create(
     userId: number,
@@ -36,7 +36,7 @@ export class ReviewsService {
     });
 
     if (!company) {
-      throw new Error("존재하지 않는 회사입니다.");
+      throw new NotFoundException("존재하지 않는 회사입니다."); // NotFoundException으로 수정
     }
 
     // 리뷰 생성
