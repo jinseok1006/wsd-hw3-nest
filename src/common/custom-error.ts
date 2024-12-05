@@ -1,5 +1,5 @@
 import {
-    BadRequestException,
+  BadRequestException,
   ForbiddenException,
   NotFoundException,
   UnauthorizedException,
@@ -38,5 +38,11 @@ export class PermissionDeniedException extends ForbiddenException {
 export class EmailAlreadyExistsException extends BadRequestException {
   constructor(message?: string) {
     super(message || "이미 사용 중인 이메일입니다.");
+  }
+}
+
+export class ApplicationCancellationException extends BadRequestException {
+  constructor(message?: string) {
+    super(message || "이 지원 내역은 취소할 수 없습니다.");
   }
 }

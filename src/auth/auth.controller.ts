@@ -21,11 +21,10 @@ import { LoginDto } from "./dto/login.dto";
 import { AuthService } from "./auth.service";
 import { RegisterDto } from "./dto/register.dto";
 import { RefreshTokenRequestDto } from "./dto/refresh-token-request.dto";
-import { RefreshTokenResponseDto } from "./dto/refresh-token-response.dto";
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { UpdateUserDto } from "src/users/dto/update-user.dto"; // UpdateUserDto 임포트
 
-@ApiTags('auth')
+@ApiTags("auth")
 @Controller("auth")
 export class AuthController {
   constructor(
@@ -40,7 +39,7 @@ export class AuthController {
   async create(
     @Body() body: RegisterDto
   ): Promise<SuccessResponseDto<UserResponseDto>> {
-    this.logger.debug({message:"회원가입 요청", body});
+    this.logger.debug({ message: "회원가입 요청", body });
     const user = await this.usersService.createUser(body); // 사용자 생성
     return new SuccessResponseDto(user); // 생성된 사용자 반환
   }
@@ -50,33 +49,31 @@ export class AuthController {
   async login(
     @Body() body: LoginDto
   ): Promise<SuccessResponseDto<LoginResponseDto>> {
-    this.logger.debug({message:"로그인 요청", body});
+    this.logger.debug({ message: "로그인 요청", body });
     const loginResponse = await this.authService.login(body);
     return new SuccessResponseDto(loginResponse);
   }
 
   // 프로필 확인
-  @Get('profile')
+  @Get("profile")
   @UseGuards(JwtAuthGuard) // JwtAuthGuard로 인증된 사용자만 접근 가능
   @ApiBearerAuth()
   @ApiCommonResponses()
-  async getProfile(@Request() req): Promise<SuccessResponseDto<UserResponseDto>> {
+  async getProfile(
+    @Request() req
+  ): Promise<SuccessResponseDto<UserResponseDto>> {
     // 인증된 사용자의 ID를 가져오기
     const userId = req.user.sub;
 
     // 사용자 정보 조회
     const user = await this.usersService.getUserById(userId);
 
-    if (!user) {
-      throw new UnauthorizedException('User not found');
-    }
-
     // 사용자 정보를 응답 DTO에 맞게 반환
     return new SuccessResponseDto(new UserResponseDto(user));
   }
 
   // 프로필 수정
-  @Put('profile')
+  @Put("profile")
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiCommonResponses()
@@ -84,18 +81,18 @@ export class AuthController {
     @Request() req,
     @Body() body: UpdateUserDto // UpdateUserDto 사용
   ): Promise<SuccessResponseDto<UserResponseDto>> {
-    this.logger.debug({ message: '프로필 업데이트 요청', body });
+    this.logger.debug({ message: "프로필 업데이트 요청", body });
     const userId = req.user.sub;
     const updatedUser = await this.usersService.updateUser(userId, body);
     return new SuccessResponseDto(new UserResponseDto(updatedUser));
   }
 
-  @Post('refresh')
+  @Post("refresh")
   @ApiCommonResponses()
   async refreshToken(
     @Body() body: RefreshTokenRequestDto
-  ): Promise<SuccessResponseDto<RefreshTokenResponseDto>> {
-    this.logger.debug({ message: '리프레시 토큰 요청', body });
+  ): Promise<SuccessResponseDto<LoginResponseDto>> {
+    this.logger.debug({ message: "리프레시 토큰 요청", body });
     const refreshTokenResponse = await this.authService.refreshToken(body);
     return new SuccessResponseDto(refreshTokenResponse);
   }
