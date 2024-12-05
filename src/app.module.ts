@@ -13,6 +13,7 @@ import { TokenModule } from './token/token.module';
 import { JobsModule } from './jobs/jobs.module';
 import { BookmarksModule } from './bookmarks/bookmarks.module';
 import { ApplicationsModule } from './applications/applications.module';
+import { ReviewsModule } from './reviews/reviews.module';
 
 
 @Module({
@@ -26,6 +27,7 @@ import { ApplicationsModule } from './applications/applications.module';
     JobsModule,
     BookmarksModule,
     ApplicationsModule,
+    ReviewsModule,
   ],
   providers: [],
 })

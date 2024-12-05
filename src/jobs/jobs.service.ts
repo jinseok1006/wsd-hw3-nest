@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service";
 import { GetJobsQueryDto } from "./dto/get-jobs-query.dto";
 import { GetJobsResponseDto } from "./dto/get-jobs-response.dto";
-import { PaginationDto } from "src/common/response.dto";
+import { PaginatedData, PaginationDto } from "src/common/response.dto";
 import { Prisma } from "@prisma/client";
 import { GetJobsDetailResponseDto } from "./dto/get-jobs-detail-response.dto";
 import { mapRegion } from "./regionMapper";
@@ -10,12 +10,11 @@ import { mapRegion } from "./regionMapper";
 @Injectable()
 export class JobsService {
   constructor(private readonly prisma: PrismaService) {}
-  3;
   // 공고 목록 조회
   async findAll(
     userId: number,
     query: GetJobsQueryDto
-  ): Promise<GetJobsResponseDto> {
+  ): Promise<PaginatedData<GetJobsResponseDto>> {
     const {
       page = 1,
       size = 20,
@@ -27,6 +26,8 @@ export class JobsService {
       companyName,
       position,
       sort,
+      annualFrom,
+      annualTo,
     } = query;
 
     const take = +size;
@@ -59,6 +60,12 @@ export class JobsService {
                 some: { name: { contains: position } },
               },
             }
+          : {},
+        annualFrom
+          ? { annualTo: { gte: +annualFrom } } // 최소 경력 조건
+          : {},
+        annualTo
+          ? { annualFrom: { lte: +annualTo } } // 최대 경력 조건
           : {},
       ],
     };
@@ -106,12 +113,8 @@ export class JobsService {
 
     const total = await this.prisma.jobPosting.count({ where });
 
-    const paginationDto = new PaginationDto(
-      total,
-      Math.ceil(total / take),
-      +page
-    );
-    return new GetJobsResponseDto(jobs, paginationDto);
+    const pagination = new PaginationDto(total, Math.ceil(total / take), +page);
+    return { data: jobs, pagination };
   }
 
   // 공고 상세 조회

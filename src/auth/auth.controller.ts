@@ -7,7 +7,6 @@ import {
   Post,
   Put,
   Request,
-  UnauthorizedException,
   UseGuards,
 } from "@nestjs/common";
 import { ApiCommonResponses } from "src/common/api-response.decorator";
@@ -24,7 +23,7 @@ import { RefreshTokenRequestDto } from "./dto/refresh-token-request.dto";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { UpdateUserDto } from "src/users/dto/update-user.dto"; // UpdateUserDto 임포트
 
-@ApiTags("auth")
+@ApiTags("Auth")
 @Controller("auth")
 export class AuthController {
   constructor(

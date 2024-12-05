@@ -1,4 +1,4 @@
-import { JobSummaryDto } from "./get-jobs-response.dto";
+import { GetJobsResponseDto } from "./get-jobs-response.dto";
 
 export class JobDetailDto {
   id: number; // 공고 ID
@@ -27,9 +27,9 @@ export class JobDetailDto {
 
 export class GetJobsDetailResponseDto {
   jobs: JobDetailDto; // 공고 요약 리스트
-  relatedJobs: JobSummaryDto[];
+  relatedJobs: GetJobsResponseDto[];
 
-  constructor(jobs: JobDetailDto, relatedJobs: JobSummaryDto[]) {
+  constructor(jobs: JobDetailDto, relatedJobs: GetJobsResponseDto[]) {
     this.jobs = jobs;
     this.relatedJobs = relatedJobs;
   }

@@ -12,7 +12,6 @@ import { JobsService } from "./jobs.service";
 import { GetJobsQueryDto } from "./dto/get-jobs-query.dto";
 import { GetJobsResponseDto } from "./dto/get-jobs-response.dto";
 import { GetJobsDetailResponseDto } from "./dto/get-jobs-detail-response.dto";
-import { JobsApiQuery } from "./jobs.api-query.decorator";
 import { SuccessResponseDto } from "src/common/response.dto";
 import { JwtAuthGuard } from "src/common/jwt-auth.guard";
 
@@ -24,14 +23,13 @@ export class JobsController {
 
   @Get()
   @ApiBearerAuth()
-  @JobsApiQuery()
   async getJobs(
     @Req() req,
     @Query() query: GetJobsQueryDto
-  ): Promise<SuccessResponseDto<GetJobsResponseDto>> {
+  ): Promise<SuccessResponseDto<GetJobsResponseDto[]>> {
     const userId = req.user.sub;
-    const successResponse = await this.jobsService.findAll(userId, query);
-    return new SuccessResponseDto(successResponse);
+    const { data, pagination } = await this.jobsService.findAll(userId, query);
+    return new SuccessResponseDto(data, pagination);
   }
 
   @Get(":id")

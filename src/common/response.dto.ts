@@ -17,6 +17,16 @@ export class PaginationDto {
   }
 }
 
+export class PaginatedData<T> {
+  data: T[];
+  pagination: PaginationDto;
+
+  constructor(data: T[], pagination: PaginationDto) {
+    this.data = data;
+    this.pagination = pagination;
+  }
+}
+
 export class SuccessResponseDto<T> {
   @ApiProperty({ example: true })
   success: boolean;
