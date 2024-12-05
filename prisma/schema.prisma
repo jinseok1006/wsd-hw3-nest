@@ -116,6 +116,7 @@ enum Application_status {
   PENDING
   ACCEPTED
   REJECTED
+  CANCLED
 }
 
 enum User_role {
