@@ -22,14 +22,11 @@ export class GetApplicationsResponseDto {
   id: number; // 지원 ID
 
   @ApiProperty({
-    description: "지원자의 이력서 내용",
-    example: "이력서 내용이 여기에 포함됩니다.",
+    description: "이력서 URL",
+    example: "https://example.com/resume.pdf",
   })
-  resume: string; // 지원자의 이력서 내용
+  resume: string; 
 
   @ApiProperty({type: JobPostingDto})
-  JobPosting: {
-    id: number; // 채용 공고 ID
-    title: string; // 채용 공고 제목
-  };
+  JobPosting: JobPostingDto;
 }

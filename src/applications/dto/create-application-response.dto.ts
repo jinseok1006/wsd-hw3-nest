@@ -32,8 +32,8 @@ export class CreateApplicationResponseDto {
   appliedAt: Date; // 지원한 시간
 
   @ApiProperty({
-    description: "선택적으로 포함된 이력서 내용",
-    example: "이력서 내용이 여기에 포함됩니다.",
+    description: "이력서 URL",
+    example: "https://example.com/resume.pdf",
     required: false,
   })
   resume?: string; // 선택적으로 포함된 이력서 내용
