@@ -1,16 +1,8 @@
-class ApplicationDto {
-  id: string;
-  title: string;
-  JobPosting: {
-    id: string;
-    title: string;
-  };
-}
-
 export class GetApplicationsResponseDto {
-  applications: ApplicationDto[];
-
-  constructor(applications: ApplicationDto[]) {
-    this.applications = applications;
-  }
+  id: number; // 지원 ID
+  resume: string; // 지원자의 이력서 내용
+  JobPosting: {
+    id: number; // 채용 공고 ID
+    title: string; // 채용 공고 제목
+  };
 }
