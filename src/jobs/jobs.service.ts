@@ -10,7 +10,6 @@ import { mapRegion } from "./regionMapper";
 @Injectable()
 export class JobsService {
   constructor(private readonly prisma: PrismaService) {}
-  3;
   // 공고 목록 조회
   async findAll(
     userId: number,
