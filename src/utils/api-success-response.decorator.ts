@@ -16,7 +16,6 @@ export function ApiSuccessResponse(
 ) {
   return applyDecorators(
     ApiExtraModels(dto),
-    ApiExtraModels(SuccessResponseDto),
     ApiOkResponse({
       description,
       schema: {

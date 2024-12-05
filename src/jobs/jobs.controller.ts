@@ -14,6 +14,7 @@ import { GetJobsResponseDto } from "./dto/get-jobs-response.dto";
 import { GetJobsDetailResponseDto } from "./dto/get-jobs-detail-response.dto";
 import { SuccessResponseDto } from "src/common/response.dto";
 import { JwtAuthGuard } from "src/common/jwt-auth.guard";
+import { ApiSuccessResponse } from "src/utils/api-success-response.decorator";
 
 @ApiTags("Jobs")
 @UseGuards(JwtAuthGuard)
@@ -23,6 +24,7 @@ export class JobsController {
 
   @Get()
   @ApiBearerAuth()
+  @ApiSuccessResponse(GetJobsResponseDto, "채용공고 전체 조회", true)
   async getJobs(
     @Req() req,
     @Query() query: GetJobsQueryDto
@@ -35,6 +37,7 @@ export class JobsController {
   @Get(":id")
   @ApiBearerAuth()
   @ApiParam({ name: "id", type: Number, description: "Job ID" })
+  @ApiSuccessResponse(GetJobsDetailResponseDto, "채용공고 상세 조회")
   async getJobDetail(
     @Req() req,
     @Param("id", ParseIntPipe) id: number

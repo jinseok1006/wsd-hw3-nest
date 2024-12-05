@@ -18,6 +18,7 @@ import { SuccessResponseDto } from "src/common/response.dto";
 import { CreateApplicationResponseDto } from "./dto/create-application-response.dto";
 import { GetApplicationsResponseDto } from "./dto/get-applications-response.dto";
 import { CancelApplicationResponseDto } from "./dto/cancel-application-response.dto";
+import { ApiSuccessResponse } from "src/utils/api-success-response.decorator";
 
 @Controller("applications")
 @UseGuards(JwtAuthGuard)
@@ -27,6 +28,7 @@ export class ApplicationsController {
   @Post()
   @ApiOperation({ summary: "지원서 작성" })
   @ApiBearerAuth()
+  @ApiSuccessResponse(CreateApplicationResponseDto, "지원서 작성 성공")
   async createApplication(
     @Req() req,
     @Body() createApplicationDto: CreateApplicationDto
@@ -41,6 +43,7 @@ export class ApplicationsController {
 
   @Get()
   @ApiBearerAuth()
+  @ApiSuccessResponse(GetApplicationsResponseDto, "지원서 목록 조회")
   async getApplications(
     @Req() req,
     @Query() getApplicationsDto: GetApplicationsDto
@@ -55,7 +58,9 @@ export class ApplicationsController {
 
   @Delete(":id")
   @UseGuards(JwtAuthGuard) // 인증 미들웨어
+  @ApiBearerAuth()
   @ApiParam({ name: "id", type: Number, description: "지원 취소할 지원서 ID" })
+  @ApiSuccessResponse(CancelApplicationResponseDto, "지원서 취소 성공")
   async cancelApplication(
     @Req() req,
     @Param("id") applicationId: number

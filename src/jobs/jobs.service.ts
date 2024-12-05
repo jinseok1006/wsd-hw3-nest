@@ -140,6 +140,13 @@ export class JobsService {
             name: true,
           },
         },
+        Bookmark: {
+          where: { userId },
+          select: {
+            id: true,
+            jobPostingId: true,
+          },
+        },
       },
     });
 
@@ -174,6 +181,7 @@ export class JobsService {
           },
         },
         Bookmark: {
+          where: { userId },
           select: {
             id: true,
             jobPostingId: true,
