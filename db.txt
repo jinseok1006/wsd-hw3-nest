@@ -1,7 +1,8 @@
 해야할일
-    jsdoc 추가
-    커스텀에러클래스 전부추가
+    oauth??
     redis이용
-    oauth
-    api응답작성
-    class validator 활용
+    
+
+    커스텀에러클래스 전부추가
+    발생할 수 있는 에러들 모두(검색한 길이가 0이라던지 -> notfound)
+    jsdoc 추가

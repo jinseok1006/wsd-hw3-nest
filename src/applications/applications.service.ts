@@ -1,4 +1,5 @@
 import {
+  ConflictException,
   ForbiddenException,
   Inject,
   Injectable,
@@ -21,19 +22,26 @@ export class ApplicationsService {
     @Inject(WINSTON_MODULE_NEST_PROVIDER) private readonly logger: LoggerService
   ) {}
 
+  /**
+   * 새로운 지원을 생성합니다.
+   * @param userId 지원하는 사용자의 ID
+   * @param createApplicationDto 지원 생성에 필요한 데이터 (jobPostingId, resume 등)
+   * @returns 생성된 지원 내역
+   * @throws ConflictException 중복 지원이 발생할 경우 예외 발생
+   */
   async create(
     userId: number,
     createApplicationDto: CreateApplicationDto
   ): Promise<CreateApplicationResponseDto> {
     const { jobPostingId, resume } = createApplicationDto;
 
-    // 중복 지원 확인
+    // 중복 지원 여부 확인
     const existingApplication = await this.prisma.application.findUnique({
       where: { userId_jobPostingId: { userId, jobPostingId } },
     });
 
     if (existingApplication) {
-      throw new Error("이미 지원한 공고입니다.");
+      throw new ConflictException("이미 지원한 공고입니다.");
     }
 
     return this.prisma.application.create({
@@ -46,9 +54,14 @@ export class ApplicationsService {
     });
   }
 
-  // 이거 자기 지원만 볼 수 있는거 맞나?
+  /**
+   * 사용자가 지원한 내역을 조회합니다.
+   * @param userId 인증된 사용자의 ID
+   * @param getApplicationsDto 필터링 옵션 (status, sortByDate 등)
+   * @returns 지원 내역 목록
+   */
   async getApplications(
-    userId: number, // 인증된 사용자의 ID를 매개변수로 추가
+    userId: number,
     getApplicationsDto: GetApplicationsDto
   ): Promise<GetApplicationsResponseDto[]> {
     const { status, sortByDate } = getApplicationsDto;
@@ -75,11 +88,20 @@ export class ApplicationsService {
     return applications;
   }
 
+  /**
+   * 사용자가 지원한 내역을 취소합니다.
+   * @param userId 인증된 사용자의 ID
+   * @param applicationId 취소할 지원 ID
+   * @returns 취소된 지원 내역
+   * @throws NotFoundException 지원 내역이 존재하지 않을 경우
+   * @throws ForbiddenException 해당 내역을 취소할 권한이 없을 경우
+   * @throws ApplicationCancellationException 지원 상태가 PENDING이 아니면 취소 불가
+   */
   async cancelApplication(
     userId: number,
     applicationId: number
   ): Promise<CancelApplicationResponseDto> {
-    // 지원 내역 확인
+    // 지원 내역 존재 여부 확인
     const application = await this.prisma.application.findUnique({
       where: { id: applicationId },
     });
@@ -91,17 +113,17 @@ export class ApplicationsService {
       throw new NotFoundException("해당 지원 내역을 찾을 수 없습니다.");
     }
 
-    // 사용자 인증
+    // 사용자가 해당 지원 내역을 취소할 권한이 있는지 확인
     if (application.userId !== userId) {
       throw new ForbiddenException("이 지원 내역을 취소할 권한이 없습니다.");
     }
 
-    // 취소 가능 여부 확인
+    // 지원 상태가 PENDING인지 확인
     if (application.status !== "PENDING") {
       throw new ApplicationCancellationException();
     }
 
-    // 상태 업데이트
+    // 지원 상태를 CANCELED로 업데이트
     const updatedApplication = await this.prisma.application.update({
       where: { id: applicationId },
       data: {

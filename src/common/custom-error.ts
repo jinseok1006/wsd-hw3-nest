@@ -46,3 +46,16 @@ export class ApplicationCancellationException extends BadRequestException {
     super(message || "이 지원 내역은 취소할 수 없습니다.");
   }
 }
+
+
+export class TokenNotFoundException extends UnauthorizedException {
+  constructor(message = '토큰이 존재하지 않습니다.') {
+    super(message);
+  }
+}
+
+export class TokenBlacklistedException extends UnauthorizedException {
+  constructor(message = '토큰이 블랙리스트에 등록되었습니다.') {
+    super(message);
+  }
+}

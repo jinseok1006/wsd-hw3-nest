@@ -11,12 +11,12 @@ export class CreateApplicationDto {
   jobPostingId: number;
 
   @ApiProperty({
-    description: "이력서 내용 (선택 입력)",
+    description: "이력서 URL (선택 입력)",
     required: false,
-    example: "이력서 내용 예시",
+    example: "https://example.com/resume.pdf",
   })
   @IsOptional() // 선택적 필드임을 명시
   @IsString({ message: "resume은 문자열이어야 합니다." }) // 문자열 검증
-  @MaxLength(5000, { message: "resume은 최대 5000자까지 가능합니다." }) // 최대 길이 검증
+  @MaxLength(200, { message: "resume은 최대 200자까지 가능합니다." }) // 최대 길이 검증
   resume?: string;
 }

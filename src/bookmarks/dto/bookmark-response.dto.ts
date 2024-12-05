@@ -1,6 +1,15 @@
+import { ApiProperty } from "@nestjs/swagger";
+
 export class BookmarkResponseDto {
-    status: string; // success or error
-    message: string;
-    bookmarked: boolean; // true: added, false: removed
-  }
-  
+  @ApiProperty({
+    description: "북마크 ID",
+    example: 123,
+  })
+  id: number;
+
+  @ApiProperty({
+    description: "북마크 상태",
+    example: "bookmarked",
+  })
+  status: "bookmarked" | "unbookmarked"; // 상태를 직관적으로 표현
+}

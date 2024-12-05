@@ -4,7 +4,6 @@ import { JwtService } from "@nestjs/jwt";
 import { LoginDto } from "./dto/login.dto";
 import { RefreshTokenRequestDto } from "./dto/refresh-token-request.dto";
 import { LoginResponseDto } from "./dto/login-response.dto";
-import { UsersService } from "src/users/users.service";
 import { PrismaService } from "src/prisma/prisma.service";
 import { WINSTON_MODULE_NEST_PROVIDER } from "nest-winston";
 import { Base64Encoder } from "src/utils/base64Encoder";
@@ -18,17 +17,28 @@ import {
   TokenExpiredException,
 } from "src/common/custom-error";
 
+/**
+ * 인증 서비스: 사용자 로그인, 리프레시 토큰 갱신 등의 기능 제공
+ */
 @Injectable()
 export class AuthService {
   constructor(
     @Inject(WINSTON_MODULE_NEST_PROVIDER)
     private readonly logger: LoggerService,
     private jwtService: JwtService,
-    private readonly usersService: UsersService,
     private readonly prismaService: PrismaService,
     private readonly tokenService: TokenService
   ) {}
 
+  /**
+   * 사용자 로그인을 처리합니다.
+   * - 이메일과 비밀번호를 확인하고 JWT 토큰을 발급합니다.
+   * - 리프레시 토큰을 저장합니다.
+   * @param loginDto 로그인 요청 데이터 (이메일, 비밀번호)
+   * @returns 액세스 토큰과 리프레시 토큰
+   * @throws UserNotFoundException 사용자가 존재하지 않을 경우
+   * @throws InvalidCredentialsException 비밀번호가 일치하지 않을 경우
+   */
   async login(loginDto: LoginDto): Promise<LoginResponseDto> {
     // 사용자 이메일로 찾기
     const user = await this.prismaService.user.findUnique({
@@ -36,12 +46,12 @@ export class AuthService {
     });
 
     if (!user) {
-      throw new UserNotFoundException();
+      throw new UserNotFoundException(); // 사용자가 존재하지 않을 경우
     }
 
-    // 비밀번호 확인 (실제 서비스에서는 해싱된 비밀번호 확인 필요)
+    // 비밀번호 확인
     if (!Base64Encoder.compare(loginDto.password, user.hashedPassword)) {
-      throw new InvalidCredentialsException();
+      throw new InvalidCredentialsException(); // 비밀번호 불일치
     }
 
     // JWT 토큰 생성
@@ -61,21 +71,33 @@ export class AuthService {
     return new LoginResponseDto(data);
   }
 
+  /**
+   * 리프레시 토큰을 사용하여 새로운 액세스 토큰과 리프레시 토큰을 발급합니다.
+   * - 기존 리프레시 토큰은 블랙리스트에 추가됩니다.
+   * - 새로운 리프레시 토큰이 저장됩니다.
+   * @param refreshTokenRequestDto 리프레시 토큰 요청 데이터
+   * @returns 새로운 액세스 토큰과 리프레시 토큰
+   * @throws InvalidTokenException 유효하지 않은 리프레시 토큰일 경우
+   * @throws TokenExpiredException 리프레시 토큰이 만료된 경우
+   */
   async refreshToken(
     refreshTokenRequestDto: RefreshTokenRequestDto
   ): Promise<LoginResponseDto> {
     const { refresh_token } = refreshTokenRequestDto;
 
+    // 리프레시 토큰이 블랙리스트에 있는지 확인
     if (this.tokenService.isBlacklisted(refresh_token)) {
       throw new InvalidTokenException("유효하지 않은 리프레시 토큰입니다.");
     }
 
+    // 리프레시 토큰으로 사용자 ID 조회
     const userId = this.tokenService.getRefreshToken(refresh_token);
     if (!userId) {
       throw new InvalidTokenException("유효하지 않은 리프레시 토큰입니다.");
     }
 
     try {
+      // 리프레시 토큰 유효성 확인
       const payload = this.jwtService.verify(refresh_token, {
         secret: process.env.JWT_SECRET,
       });
@@ -92,7 +114,7 @@ export class AuthService {
         { expiresIn: "7d" }
       );
 
-      // 기존 리프레시 토큰 블랙리스트에 추가 및 삭제
+      // 기존 리프레시 토큰 블랙리스트 처리 및 삭제
       this.tokenService.addToBlacklist(refresh_token);
       this.tokenService.deleteRefreshToken(refresh_token);
 
@@ -104,6 +126,7 @@ export class AuthService {
         refresh_token: newRefreshToken,
       });
     } catch (error) {
+      // 토큰 만료 및 유효성 검사 예외 처리
       if (error.name === "TokenExpiredError") {
         throw new TokenExpiredException("리프레시 토큰이 만료되었습니다.");
       }

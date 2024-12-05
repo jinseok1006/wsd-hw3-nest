@@ -1,8 +1,32 @@
+import { ApiProperty } from "@nestjs/swagger";
+
+class JobPostingDto {
+  @ApiProperty({
+    description: "채용 공고 ID",
+    example: 456,
+  })
+  id: number; // 채용 공고 ID
+
+  @ApiProperty({
+    description: "채용 공고 제목",
+    example: "Backend Developer",
+  })
+  title: string; // 채용 공고 제목
+}
+
 export class GetApplicationsResponseDto {
+  @ApiProperty({
+    description: "지원 ID",
+    example: 123,
+  })
   id: number; // 지원 ID
-  resume: string; // 지원자의 이력서 내용
-  JobPosting: {
-    id: number; // 채용 공고 ID
-    title: string; // 채용 공고 제목
-  };
+
+  @ApiProperty({
+    description: "이력서 URL",
+    example: "https://example.com/resume.pdf",
+  })
+  resume: string; 
+
+  @ApiProperty({type: JobPostingDto})
+  JobPosting: JobPostingDto;
 }
