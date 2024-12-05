@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service";
 import { GetJobsQueryDto } from "./dto/get-jobs-query.dto";
 import { GetJobsResponseDto } from "./dto/get-jobs-response.dto";
-import { PaginationDto } from "src/common/response.dto";
+import { PaginatedData, PaginationDto } from "src/common/response.dto";
 import { Prisma } from "@prisma/client";
 import { GetJobsDetailResponseDto } from "./dto/get-jobs-detail-response.dto";
 import { mapRegion } from "./regionMapper";
@@ -14,7 +14,7 @@ export class JobsService {
   async findAll(
     userId: number,
     query: GetJobsQueryDto
-  ): Promise<GetJobsResponseDto> {
+  ): Promise<PaginatedData<GetJobsResponseDto>> {
     const {
       page = 1,
       size = 20,
@@ -105,12 +105,8 @@ export class JobsService {
 
     const total = await this.prisma.jobPosting.count({ where });
 
-    const paginationDto = new PaginationDto(
-      total,
-      Math.ceil(total / take),
-      +page
-    );
-    return new GetJobsResponseDto(jobs, paginationDto);
+    const pagination = new PaginationDto(total, Math.ceil(total / take), +page);
+    return { data: jobs, pagination };
   }
 
   // 공고 상세 조회

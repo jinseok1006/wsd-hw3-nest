@@ -39,8 +39,11 @@ export class ReviewsController {
     @Param("companyId") companyId: number,
     @Query() query: GetCompanyReviewsQueryDto
   ): Promise<SuccessResponseDto<GetCompanyReviewsResponseDto[]>> {
-    const reviews = await this.reviewsService.findAll(companyId, query);
-    return new SuccessResponseDto(reviews);
+    const { data, pagination } = await this.reviewsService.findAll(
+      companyId,
+      query
+    );
+    return new SuccessResponseDto(data, pagination);
   }
 
   @Delete(":reviewId")

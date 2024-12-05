@@ -1,6 +1,4 @@
-import { PaginationDto } from "src/common/response.dto";
-
-export class JobSummaryDto {
+export class GetJobsResponseDto {
   id: number; // 공고 ID
   image: string;
   title: string; // 공고 제목
@@ -16,14 +14,4 @@ export class JobSummaryDto {
     jobPostingId: number;
   }[];
   // 북마크 여부
-}
-
-export class GetJobsResponseDto {
-  jobs: JobSummaryDto[]; // 공고 요약 리스트
-  pagination: PaginationDto;
-
-  constructor(jobs: JobSummaryDto[], pagination: PaginationDto) {
-    this.jobs = jobs;
-    this.pagination = pagination;
-  }
 }

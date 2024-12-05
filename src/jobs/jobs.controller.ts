@@ -28,10 +28,10 @@ export class JobsController {
   async getJobs(
     @Req() req,
     @Query() query: GetJobsQueryDto
-  ): Promise<SuccessResponseDto<GetJobsResponseDto>> {
+  ): Promise<SuccessResponseDto<GetJobsResponseDto[]>> {
     const userId = req.user.sub;
-    const successResponse = await this.jobsService.findAll(userId, query);
-    return new SuccessResponseDto(successResponse);
+    const { data, pagination } = await this.jobsService.findAll(userId, query);
+    return new SuccessResponseDto(data, pagination);
   }
 
   @Get(":id")

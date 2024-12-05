@@ -9,6 +9,7 @@ import { PrismaService } from "src/prisma/prisma.service";
 import { GetCompanyReviewsQueryDto } from "./dto/get-company-reviews-query.dto";
 import { GetCompanyReviewsResponseDto } from "./dto/get-company-reviews-response.dto";
 import { DeleteCompanyReviewResponseDto } from "./dto/delete-company-review-response.dto";
+import { PaginatedData, PaginationDto } from "src/common/response.dto";
 
 @Injectable()
 export class ReviewsService {
@@ -53,8 +54,17 @@ export class ReviewsService {
   async findAll(
     companyId: number,
     query: GetCompanyReviewsQueryDto
-  ): Promise<GetCompanyReviewsResponseDto[]> {
-    const { sortByDate = "desc", minRating, maxRating } = query;
+  ): Promise<PaginatedData<GetCompanyReviewsResponseDto>> {
+    const {
+      page = 1,
+      size = 10,
+      sortByDate = "desc",
+      minRating,
+      maxRating,
+    } = query;
+
+    const take = +size; // 한 페이지에 표시할 리뷰 개수
+    const skip = (page - 1) * take; // 건너뛸 리뷰 개수
 
     // 회사 존재 여부 확인
     const company = await this.prisma.company.findUnique({
@@ -62,7 +72,7 @@ export class ReviewsService {
     });
 
     if (!company) {
-      throw new Error("존재하지 않는 회사입니다.");
+      throw new NotFoundException("존재하지 않는 회사입니다.");
     }
 
     // 특정 회사에 대한 리뷰 조회
@@ -75,6 +85,8 @@ export class ReviewsService {
       orderBy: {
         createdAt: sortByDate,
       },
+      take,
+      skip,
       select: {
         id: true,
         userId: true,
@@ -83,8 +95,19 @@ export class ReviewsService {
         createdAt: true,
       },
     });
+    // 총 리뷰 개수 계산
+    const total = await this.prisma.companyReview.count({
+      where: {
+        companyId,
+        ...(minRating && { rating: { gte: minRating } }),
+        ...(maxRating && { rating: { lte: maxRating } }),
+      },
+    });
 
-    return reviews;
+    // 페이지네이션 정보 생성
+    const pagination = new PaginationDto(page, total, Math.ceil(total / take));
+
+    return { data: reviews, pagination };
   }
 
   async remove(
