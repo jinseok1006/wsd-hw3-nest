@@ -12,11 +12,12 @@ import { BookmarksService } from "./bookmarks.service";
 import { CreateBookmarkDto } from "./dto/create-bookmark.dto";
 import { BookmarkListQueryDto } from "./dto/bookmark-list-query.dto";
 import { JwtAuthGuard } from "../common/jwt-auth.guard";
-import { ApiBearerAuth } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiOperation } from "@nestjs/swagger";
 import { ApiSuccessResponse } from "src/utils/api-success-response.decorator";
 import { SuccessResponseDto } from "src/common/response.dto";
 import { BookmarkResponseDto } from "./dto/bookmark-response.dto";
 import { BookmarkListDto } from "./dto/bookmark-list-response.dto";
+import { ApiCommonErrorResponses } from "src/common/api-response.decorator";
 // import { BookmarkListResponseDto } from "./dto/bookmark-list-response.dto";
 
 @Controller("bookmarks")
@@ -29,6 +30,8 @@ export class BookmarksController {
   @Post()
   @ApiBearerAuth()
   @ApiSuccessResponse(BookmarkResponseDto, "채용공고 즐겨찾기 추가/제거 성공")
+  @ApiCommonErrorResponses({ badRequest: true, unauthorized: true })
+  @ApiOperation({ summary: "채용공고 북마크 추가/제거" })
   async toggleBookmark(
     @Request() req,
     @Body() createBookmarkDto: CreateBookmarkDto
@@ -44,12 +47,14 @@ export class BookmarksController {
   // 북마크 목록 조회
   @Get()
   @ApiBearerAuth()
+  @ApiCommonErrorResponses({ badRequest: true, unauthorized: true })
   @ApiSuccessResponse(
     BookmarkListDto,
     "채용공고 즐겨찾기 목록 조회 성공",
     HttpStatus.OK,
     true
   )
+  @ApiOperation({ summary: "채용공고 북마크 목록 조회" })
   async getBookmarks(
     @Request() req,
     @Query() query: BookmarkListQueryDto

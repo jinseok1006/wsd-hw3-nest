@@ -1,15 +1,15 @@
-import { ApiExtraModels, ApiProperty } from "@nestjs/swagger";
+import { ApiProperty } from "@nestjs/swagger";
 
 export class PaginationDto {
   @ApiProperty({ example: 1 })
   currentPage: number;
-  
+
   @ApiProperty({ example: 100 })
   totalItems: number;
-  
+
   @ApiProperty({ example: 10 })
   totalPages: number;
-  
+
   constructor(currentPage: number, totalItems: number, totalPages: number) {
     this.currentPage = currentPage;
     this.totalItems = totalItems;

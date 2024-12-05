@@ -46,7 +46,7 @@ export class ApplicationsService {
     });
   }
 
-  // 이거 자기 지원만 볼 수 있는거 맞나?
+
   async getApplications(
     userId: number, // 인증된 사용자의 ID를 매개변수로 추가
     getApplicationsDto: GetApplicationsDto

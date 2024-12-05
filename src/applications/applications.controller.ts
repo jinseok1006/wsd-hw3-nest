@@ -21,6 +21,7 @@ import { CreateApplicationResponseDto } from "./dto/create-application-response.
 import { GetApplicationsResponseDto } from "./dto/get-applications-response.dto";
 import { CancelApplicationResponseDto } from "./dto/cancel-application-response.dto";
 import { ApiSuccessResponse } from "src/utils/api-success-response.decorator";
+import { ApiCommonErrorResponses } from "src/common/api-response.decorator";
 
 @Controller("applications")
 @UseGuards(JwtAuthGuard)
@@ -36,6 +37,7 @@ export class ApplicationsController {
     "지원서 작성 성공",
     HttpStatus.CREATED
   )
+  @ApiCommonErrorResponses({ badRequest: true, unauthorized: true })
   async createApplication(
     @Req() req,
     @Body() createApplicationDto: CreateApplicationDto
@@ -51,6 +53,8 @@ export class ApplicationsController {
   @Get()
   @ApiBearerAuth()
   @ApiSuccessResponse(GetApplicationsResponseDto, "지원서 목록 조회")
+  @ApiCommonErrorResponses({ badRequest: true, unauthorized: true })
+  @ApiOperation({ summary: "지원서 목록 조회" })
   async getApplications(
     @Req() req,
     @Query() getApplicationsDto: GetApplicationsDto
@@ -73,6 +77,8 @@ export class ApplicationsController {
     "지원서 취소 성공",
     HttpStatus.NO_CONTENT
   )
+  @ApiCommonErrorResponses({ badRequest: true, unauthorized: true })
+  @ApiOperation({ summary: "지원서 취소" })
   async cancelApplication(
     @Req() req,
     @Param("id") applicationId: number

@@ -8,7 +8,7 @@ import {
   Req,
   UseGuards,
 } from "@nestjs/common";
-import { ApiBearerAuth, ApiParam, ApiTags } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiOperation, ApiParam, ApiTags } from "@nestjs/swagger";
 import { JobsService } from "./jobs.service";
 import { GetJobsQueryDto } from "./dto/get-jobs-query.dto";
 import { GetJobsResponseDto } from "./dto/get-jobs-response.dto";
@@ -16,6 +16,7 @@ import { GetJobsDetailResponseDto } from "./dto/get-jobs-detail-response.dto";
 import { SuccessResponseDto } from "src/common/response.dto";
 import { JwtAuthGuard } from "src/common/jwt-auth.guard";
 import { ApiSuccessResponse } from "src/utils/api-success-response.decorator";
+import { ApiCommonErrorResponses } from "src/common/api-response.decorator";
 
 @ApiTags("Jobs")
 @UseGuards(JwtAuthGuard)
@@ -26,6 +27,8 @@ export class JobsController {
   @Get()
   @ApiBearerAuth()
   @ApiSuccessResponse(GetJobsResponseDto, "채용공고 전체 조회", HttpStatus.OK, true)
+  @ApiCommonErrorResponses({ badRequest: true, unauthorized: true })
+  @ApiOperation({ summary: "채용공고 전체 조회" })
   async getJobs(
     @Req() req,
     @Query() query: GetJobsQueryDto
@@ -39,6 +42,8 @@ export class JobsController {
   @ApiBearerAuth()
   @ApiParam({ name: "id", type: Number, description: "Job ID" })
   @ApiSuccessResponse(GetJobsDetailResponseDto, "채용공고 상세 조회")
+  @ApiCommonErrorResponses({ badRequest: true, unauthorized: true, notFound: true })
+  @ApiOperation({ summary: "채용공고 상세 조회" })
   async getJobDetail(
     @Req() req,
     @Param("id", ParseIntPipe) id: number
