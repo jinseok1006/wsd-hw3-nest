@@ -1,19 +1,29 @@
 import { ApiProperty } from "@nestjs/swagger";
 
 export class PaginationDto {
-  @ApiProperty()
+  @ApiProperty({ example: 1 })
   currentPage: number;
 
-  @ApiProperty()
+  @ApiProperty({ example: 100 })
   totalItems: number;
 
-  @ApiProperty()
+  @ApiProperty({ example: 10 })
   totalPages: number;
 
   constructor(currentPage: number, totalItems: number, totalPages: number) {
     this.currentPage = currentPage;
     this.totalItems = totalItems;
     this.totalPages = totalPages;
+  }
+}
+
+export class PaginatedData<T> {
+  data: T[];
+  pagination: PaginationDto;
+
+  constructor(data: T[], pagination: PaginationDto) {
+    this.data = data;
+    this.pagination = pagination;
   }
 }
 
@@ -24,14 +34,14 @@ export class SuccessResponseDto<T> {
   @ApiProperty()
   result: T;
 
-  @ApiProperty({
-    example: {
-      currentPage: 1,
-      totalItems: 100,
-      totalPages: 10,
-    },
-    required: false,
-  })
+  // @ApiProperty({
+  //   example: {
+  //     currentPage: 1,
+  //     totalItems: 100,
+  //     totalPages: 10,
+  //   },
+  //   required: false,
+  // })
   pagination?: PaginationDto;
 
   constructor(result: T, pagination?: PaginationDto) {
