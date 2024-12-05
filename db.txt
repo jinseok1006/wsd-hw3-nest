@@ -4,6 +4,4 @@
     redis이용
     oauth
     api응답작성
-    북마크 페이지네이션 조회
-    지원내용제거
-    
+    class validator 활용

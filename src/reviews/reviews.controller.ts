@@ -18,7 +18,9 @@ import { CreateCompanyReviewResponseDto } from "./dto/create-company-review-resp
 import { GetCompanyReviewsQueryDto } from "./dto/get-company-reviews-query.dto";
 import { GetCompanyReviewsResponseDto } from "./dto/get-company-reviews-response.dto";
 import { DeleteCompanyReviewResponseDto } from "./dto/delete-company-review-response.dto";
+import { ApiTags } from "@nestjs/swagger";
 
+@ApiTags("Company Reviews")
 @Controller("reviews")
 @UseGuards(JwtAuthGuard)
 export class ReviewsController {

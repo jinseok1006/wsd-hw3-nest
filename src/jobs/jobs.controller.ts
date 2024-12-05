@@ -12,7 +12,6 @@ import { JobsService } from "./jobs.service";
 import { GetJobsQueryDto } from "./dto/get-jobs-query.dto";
 import { GetJobsResponseDto } from "./dto/get-jobs-response.dto";
 import { GetJobsDetailResponseDto } from "./dto/get-jobs-detail-response.dto";
-import { JobsApiQuery } from "./jobs.api-query.decorator";
 import { SuccessResponseDto } from "src/common/response.dto";
 import { JwtAuthGuard } from "src/common/jwt-auth.guard";
 
@@ -24,7 +23,7 @@ export class JobsController {
 
   @Get()
   @ApiBearerAuth()
-  @JobsApiQuery()
+  // @JobsApiQuery()
   async getJobs(
     @Req() req,
     @Query() query: GetJobsQueryDto
