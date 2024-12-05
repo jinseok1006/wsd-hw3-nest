@@ -10,7 +10,7 @@ import {
   UseGuards,
 } from "@nestjs/common";
 import { ApiCommonResponses } from "src/common/api-response.decorator";
-import { SuccessResponseDto } from "src/common/response.dto";
+import { PaginatedData, PaginationDto, SuccessResponseDto } from "src/common/response.dto";
 import { UserResponseDto } from "src/users/dto/user-response.dto";
 import { UsersService } from "src/users/users.service";
 import { LoginResponseDto } from "./dto/login-response.dto";
@@ -20,9 +20,18 @@ import { LoginDto } from "./dto/login.dto";
 import { AuthService } from "./auth.service";
 import { RegisterDto } from "./dto/register.dto";
 import { RefreshTokenRequestDto } from "./dto/refresh-token-request.dto";
-import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
+import {
+  ApiBearerAuth,
+  ApiCreatedResponse,
+  ApiExtraModels,
+  ApiOkResponse,
+  ApiResponse,
+  ApiTags,
+} from "@nestjs/swagger";
 import { UpdateUserDto } from "src/users/dto/update-user.dto"; // UpdateUserDto 임포트
+import { ApiSuccessResponse } from "src/utils/api-success-response.decorator";
 
+@ApiExtraModels(PaginationDto)
 @ApiTags("Auth")
 @Controller("auth")
 export class AuthController {
@@ -35,6 +44,7 @@ export class AuthController {
 
   @Post("register")
   @ApiCommonResponses()
+  @ApiSuccessResponse(UserResponseDto, "회원가입 성공")
   async create(
     @Body() body: RegisterDto
   ): Promise<SuccessResponseDto<UserResponseDto>> {
@@ -45,6 +55,7 @@ export class AuthController {
 
   @Post("login")
   @ApiCommonResponses()
+  @ApiSuccessResponse(LoginResponseDto, "로그인 성공")
   async login(
     @Body() body: LoginDto
   ): Promise<SuccessResponseDto<LoginResponseDto>> {
@@ -58,6 +69,7 @@ export class AuthController {
   @UseGuards(JwtAuthGuard) // JwtAuthGuard로 인증된 사용자만 접근 가능
   @ApiBearerAuth()
   @ApiCommonResponses()
+  @ApiSuccessResponse(UserResponseDto, "프로필 조회 성공")
   async getProfile(
     @Request() req
   ): Promise<SuccessResponseDto<UserResponseDto>> {
@@ -76,6 +88,7 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiCommonResponses()
+  @ApiSuccessResponse(UserResponseDto, "프로필 업데이트 성공")
   async updateProfile(
     @Request() req,
     @Body() body: UpdateUserDto // UpdateUserDto 사용
@@ -88,6 +101,7 @@ export class AuthController {
 
   @Post("refresh")
   @ApiCommonResponses()
+  @ApiSuccessResponse(LoginResponseDto, "리프레시 토큰 발급 성공")
   async refreshToken(
     @Body() body: RefreshTokenRequestDto
   ): Promise<SuccessResponseDto<LoginResponseDto>> {

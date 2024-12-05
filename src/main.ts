@@ -6,6 +6,7 @@ import { HttpExceptionFilter } from "./exception/http-exception.filter";
 import { WINSTON_MODULE_PROVIDER } from "nest-winston";
 import { PrismaExceptionFilter } from "./exception/prisma-exception.filter";
 import { Request, Response } from "express";
+import { PaginationDto, SuccessResponseDto } from "./common/response.dto";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -36,7 +37,9 @@ async function bootstrap() {
     .setExternalDoc("OpenAPI 명세를 JSON 형식으로 보기", "/swagger.json")
     .build();
 
-  const document = SwaggerModule.createDocument(app, config);
+  const document = SwaggerModule.createDocument(app, config, {
+    extraModels: [SuccessResponseDto, PaginationDto],
+  });
 
   // Swagger UI를 '/swagger' 경로에서 제공
   SwaggerModule.setup("swagger", app, document);
