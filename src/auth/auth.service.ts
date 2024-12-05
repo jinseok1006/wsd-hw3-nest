@@ -1,17 +1,11 @@
 // src/auth/auth.service.ts
-import {
-  Inject,
-  Injectable,
-  LoggerService,
-  Request,
-} from "@nestjs/common";
+import { Inject, Injectable, LoggerService } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { LoginDto } from "./dto/login.dto";
 import { RefreshTokenRequestDto } from "./dto/refresh-token-request.dto";
 import { LoginResponseDto } from "./dto/login-response.dto";
 import { UsersService } from "src/users/users.service";
 import { PrismaService } from "src/prisma/prisma.service";
-import { UserResponseDto } from "src/users/dto/user-response.dto";
 import { WINSTON_MODULE_NEST_PROVIDER } from "nest-winston";
 import { Base64Encoder } from "src/utils/base64Encoder";
 import { TokenService } from "src/token/token.service";
@@ -116,16 +110,4 @@ export class AuthService {
       throw new InvalidTokenException("유효하지 않은 리프레시 토큰입니다.");
     }
   }
-
-  async getProfile(@Request() req): Promise<UserResponseDto> {
-    const userId = req.user.sub;
-    const user = await this.usersService.getUserById(userId);
-
-    if (!user) {
-      throw new UserNotFoundException();
-    }
-
-    return new UserResponseDto(user);
-  }
-
 }

@@ -14,11 +14,11 @@ model Application {
   status       Application_status
   appliedAt    DateTime           @default(now())
   updatedAt    DateTime           @updatedAt
-  resumeUrl    String?
-  coverLetter  String?
+  resume       String?             @db.Text
   JobPosting   JobPosting         @relation(fields: [jobPostingId], references: [id])
   User         User               @relation(fields: [userId], references: [id])
 
+  @@unique([userId, jobPostingId], map: "Application_userId_jobPostingId_uk")
   @@index([jobPostingId], map: "Application_jobPostingId_fkey")
   @@index([userId], map: "Application_userId_fkey")
 }
@@ -116,6 +116,7 @@ enum Application_status {
   PENDING
   ACCEPTED
   REJECTED
+  CANCELED
 }
 
 enum User_role {

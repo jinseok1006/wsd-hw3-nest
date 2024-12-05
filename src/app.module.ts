@@ -12,6 +12,7 @@ import { ConfigModule } from "@nestjs/config";
 import { TokenModule } from './token/token.module';
 import { JobsModule } from './jobs/jobs.module';
 import { BookmarksModule } from './bookmarks/bookmarks.module';
+import { ApplicationsModule } from './applications/applications.module';
 
 
 @Module({
@@ -24,6 +25,7 @@ import { BookmarksModule } from './bookmarks/bookmarks.module';
     TokenModule,
     JobsModule,
     BookmarksModule,
+    ApplicationsModule,
   ],
   providers: [],
 })

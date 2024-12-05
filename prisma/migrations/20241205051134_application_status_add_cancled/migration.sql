@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE `Application` MODIFY `status` ENUM('PENDING', 'ACCEPTED', 'REJECTED', 'CANCLED') NOT NULL;
