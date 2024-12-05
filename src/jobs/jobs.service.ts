@@ -26,6 +26,8 @@ export class JobsService {
       companyName,
       position,
       sort,
+      annualFrom,
+      annualTo,
     } = query;
 
     const take = +size;
@@ -58,6 +60,12 @@ export class JobsService {
                 some: { name: { contains: position } },
               },
             }
+          : {},
+        annualFrom
+          ? { annualTo: { gte: +annualFrom } } // 최소 경력 조건
+          : {},
+        annualTo
+          ? { annualFrom: { lte: +annualTo } } // 최대 경력 조건
           : {},
       ],
     };
