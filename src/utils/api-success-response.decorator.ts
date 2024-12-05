@@ -1,5 +1,5 @@
-import { applyDecorators } from "@nestjs/common";
-import { ApiOkResponse, getSchemaPath, ApiExtraModels } from "@nestjs/swagger";
+import { applyDecorators, HttpStatus } from "@nestjs/common";
+import { getSchemaPath, ApiExtraModels, ApiResponse } from "@nestjs/swagger";
 import { SuccessResponseDto } from "src/common/response.dto";
 
 /**
@@ -12,11 +12,13 @@ import { SuccessResponseDto } from "src/common/response.dto";
 export function ApiSuccessResponse(
   dto: any,
   description: string,
-  includePagination = false,
+  status = HttpStatus.OK,
+  includePagination = false
 ) {
   return applyDecorators(
     ApiExtraModels(dto),
-    ApiOkResponse({
+    ApiResponse({
+      status,
       description,
       schema: {
         allOf: [

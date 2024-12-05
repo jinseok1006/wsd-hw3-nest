@@ -6,6 +6,7 @@ import {
   Query,
   UseGuards,
   Request,
+  HttpStatus,
 } from "@nestjs/common";
 import { BookmarksService } from "./bookmarks.service";
 import { CreateBookmarkDto } from "./dto/create-bookmark.dto";
@@ -43,7 +44,12 @@ export class BookmarksController {
   // 북마크 목록 조회
   @Get()
   @ApiBearerAuth()
-  @ApiSuccessResponse(BookmarkListDto, "채용공고 즐겨찾기 목록 조회 성공", true)
+  @ApiSuccessResponse(
+    BookmarkListDto,
+    "채용공고 즐겨찾기 목록 조회 성공",
+    HttpStatus.OK,
+    true
+  )
   async getBookmarks(
     @Request() req,
     @Query() query: BookmarkListQueryDto

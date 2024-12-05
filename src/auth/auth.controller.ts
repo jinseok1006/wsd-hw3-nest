@@ -2,6 +2,8 @@ import {
   Body,
   Controller,
   Get,
+  HttpCode,
+  HttpStatus,
   Inject,
   LoggerService,
   Post,
@@ -10,7 +12,7 @@ import {
   UseGuards,
 } from "@nestjs/common";
 import { ApiCommonResponses } from "src/common/api-response.decorator";
-import { PaginatedData, PaginationDto, SuccessResponseDto } from "src/common/response.dto";
+import { PaginationDto, SuccessResponseDto } from "src/common/response.dto";
 import { UserResponseDto } from "src/users/dto/user-response.dto";
 import { UsersService } from "src/users/users.service";
 import { LoginResponseDto } from "./dto/login-response.dto";
@@ -20,14 +22,7 @@ import { LoginDto } from "./dto/login.dto";
 import { AuthService } from "./auth.service";
 import { RegisterDto } from "./dto/register.dto";
 import { RefreshTokenRequestDto } from "./dto/refresh-token-request.dto";
-import {
-  ApiBearerAuth,
-  ApiCreatedResponse,
-  ApiExtraModels,
-  ApiOkResponse,
-  ApiResponse,
-  ApiTags,
-} from "@nestjs/swagger";
+import { ApiBearerAuth, ApiExtraModels, ApiTags } from "@nestjs/swagger";
 import { UpdateUserDto } from "src/users/dto/update-user.dto"; // UpdateUserDto 임포트
 import { ApiSuccessResponse } from "src/utils/api-success-response.decorator";
 
@@ -44,7 +39,8 @@ export class AuthController {
 
   @Post("register")
   @ApiCommonResponses()
-  @ApiSuccessResponse(UserResponseDto, "회원가입 성공")
+  @HttpCode(HttpStatus.CREATED)
+  @ApiSuccessResponse(UserResponseDto, "회원가입 성공", HttpStatus.CREATED)
   async create(
     @Body() body: RegisterDto
   ): Promise<SuccessResponseDto<UserResponseDto>> {

@@ -1,6 +1,7 @@
 import {
   Controller,
   Get,
+  HttpStatus,
   Param,
   ParseIntPipe,
   Query,
@@ -24,7 +25,7 @@ export class JobsController {
 
   @Get()
   @ApiBearerAuth()
-  @ApiSuccessResponse(GetJobsResponseDto, "채용공고 전체 조회", true)
+  @ApiSuccessResponse(GetJobsResponseDto, "채용공고 전체 조회", HttpStatus.OK, true)
   async getJobs(
     @Req() req,
     @Query() query: GetJobsQueryDto

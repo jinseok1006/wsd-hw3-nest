@@ -4,10 +4,9 @@ import {
   NotFoundException,
 } from "@nestjs/common";
 import { CreateCompanyReviewDto } from "./dto/create-company-review.dto";
-import { CreateCompanyReviewResponseDto } from "./dto/create-company-review-response.dto";
+import { CompanyReviewResponseDto } from "./dto/company-review-response.dto";
 import { PrismaService } from "src/prisma/prisma.service";
 import { GetCompanyReviewsQueryDto } from "./dto/get-company-reviews-query.dto";
-import { GetCompanyReviewsResponseDto } from "./dto/get-company-reviews-response.dto";
 import { DeleteCompanyReviewResponseDto } from "./dto/delete-company-review-response.dto";
 import { PaginatedData, PaginationDto } from "src/common/response.dto";
 
@@ -17,7 +16,7 @@ export class ReviewsService {
   async create(
     userId: number,
     createReviewDto: CreateCompanyReviewDto
-  ): Promise<CreateCompanyReviewResponseDto> {
+  ): Promise<CompanyReviewResponseDto> {
     const { companyId, rating, content } = createReviewDto;
 
     // 회사 존재 여부 확인
@@ -54,7 +53,7 @@ export class ReviewsService {
   async findAll(
     companyId: number,
     query: GetCompanyReviewsQueryDto
-  ): Promise<PaginatedData<GetCompanyReviewsResponseDto>> {
+  ): Promise<PaginatedData<CompanyReviewResponseDto>> {
     const {
       page = 1,
       size = 10,
@@ -89,10 +88,10 @@ export class ReviewsService {
       skip,
       select: {
         id: true,
+        companyId: true,
         userId: true,
         rating: true,
         content: true,
-        createdAt: true,
       },
     });
     // 총 리뷰 개수 계산
@@ -135,7 +134,6 @@ export class ReviewsService {
 
     return {
       id: review.id,
-      message: "리뷰가 성공적으로 삭제되었습니다.",
     };
   }
 }

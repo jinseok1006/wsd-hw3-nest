@@ -3,6 +3,8 @@ import {
   Controller,
   Delete,
   Get,
+  HttpCode,
+  HttpStatus,
   Param,
   Post,
   Query,
@@ -28,7 +30,12 @@ export class ApplicationsController {
   @Post()
   @ApiOperation({ summary: "지원서 작성" })
   @ApiBearerAuth()
-  @ApiSuccessResponse(CreateApplicationResponseDto, "지원서 작성 성공")
+  @HttpCode(HttpStatus.CREATED)
+  @ApiSuccessResponse(
+    CreateApplicationResponseDto,
+    "지원서 작성 성공",
+    HttpStatus.CREATED
+  )
   async createApplication(
     @Req() req,
     @Body() createApplicationDto: CreateApplicationDto
@@ -60,7 +67,12 @@ export class ApplicationsController {
   @UseGuards(JwtAuthGuard) // 인증 미들웨어
   @ApiBearerAuth()
   @ApiParam({ name: "id", type: Number, description: "지원 취소할 지원서 ID" })
-  @ApiSuccessResponse(CancelApplicationResponseDto, "지원서 취소 성공")
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiSuccessResponse(
+    CancelApplicationResponseDto,
+    "지원서 취소 성공",
+    HttpStatus.NO_CONTENT
+  )
   async cancelApplication(
     @Req() req,
     @Param("id") applicationId: number
