@@ -12,7 +12,7 @@ import {
 import { ApplicationsService } from "./applications.service";
 import { CreateApplicationDto } from "./dto/create-application.dto";
 import { JwtAuthGuard } from "src/common/jwt-auth.guard";
-import { ApiBearerAuth } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiParam } from "@nestjs/swagger";
 import { GetApplicationsDto } from "./dto/get-applications.dto";
 import { SuccessResponseDto } from "src/common/response.dto";
 import { CreateApplicationResponseDto } from "./dto/create-application-response.dto";
@@ -54,6 +54,7 @@ export class ApplicationsController {
 
   @Delete(":id")
   @UseGuards(JwtAuthGuard) // 인증 미들웨어
+  @ApiParam({ name: "id", type: Number, description: "지원 취소할 지원서 ID" })
   async cancelApplication(
     @Req() req,
     @Param("id") applicationId: number

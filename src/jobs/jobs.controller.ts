@@ -23,7 +23,6 @@ export class JobsController {
 
   @Get()
   @ApiBearerAuth()
-  // @JobsApiQuery()
   async getJobs(
     @Req() req,
     @Query() query: GetJobsQueryDto
