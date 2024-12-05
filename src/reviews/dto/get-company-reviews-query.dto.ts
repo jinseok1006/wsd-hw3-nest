@@ -1,3 +1,4 @@
+// 전체검색용?? 말이좀 안되는데?
 export class GetCompanyReviewsQueryDto {
   page?: number; // 페이지 번호 (기본값: 1)
   size?: number; // 한 페이지에 표시할 리뷰 수 (기본값: 10)

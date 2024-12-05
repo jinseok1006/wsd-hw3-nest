@@ -18,7 +18,7 @@ import { CreateCompanyReviewResponseDto } from "./dto/create-company-review-resp
 import { GetCompanyReviewsQueryDto } from "./dto/get-company-reviews-query.dto";
 import { GetCompanyReviewsResponseDto } from "./dto/get-company-reviews-response.dto";
 import { DeleteCompanyReviewResponseDto } from "./dto/delete-company-review-response.dto";
-import { ApiTags } from "@nestjs/swagger";
+import { ApiParam, ApiTags } from "@nestjs/swagger";
 
 @ApiTags("Company Reviews")
 @Controller("reviews")
@@ -37,6 +37,7 @@ export class ReviewsController {
   }
 
   @Get(":companyId")
+  @ApiParam({ name: "companyId", type: Number, description: "리뷰 검색할 회사 ID" })
   async getCompanyReviews(
     @Param("companyId") companyId: number,
     @Query() query: GetCompanyReviewsQueryDto
@@ -49,6 +50,7 @@ export class ReviewsController {
   }
 
   @Delete(":reviewId")
+  @ApiParam({ name: "reviewId", type: Number, description: "삭제할 게시글 ID" })
   async deleteReview(
     @Req() req,
     @Param("reviewId") reviewId: number

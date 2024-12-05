@@ -12,7 +12,7 @@ import {
 import { ApplicationsService } from "./applications.service";
 import { CreateApplicationDto } from "./dto/create-application.dto";
 import { JwtAuthGuard } from "src/common/jwt-auth.guard";
-import { ApiBearerAuth, ApiParam } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiOperation, ApiParam } from "@nestjs/swagger";
 import { GetApplicationsDto } from "./dto/get-applications.dto";
 import { SuccessResponseDto } from "src/common/response.dto";
 import { CreateApplicationResponseDto } from "./dto/create-application-response.dto";
@@ -25,6 +25,7 @@ export class ApplicationsController {
   constructor(private readonly applicationsService: ApplicationsService) {}
 
   @Post()
+  @ApiOperation({ summary: "지원서 작성" })
   @ApiBearerAuth()
   async createApplication(
     @Req() req,
