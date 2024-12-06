@@ -15,6 +15,7 @@ import {
 import { CACHE_MANAGER } from "@nestjs/cache-manager";
 import { Cache } from "cache-manager";
 import { WINSTON_MODULE_NEST_PROVIDER } from "nest-winston";
+import { CacheKeyHelper } from "src/common/cache/cache-key-helper";
 
 /**
  * 사용자 서비스: 사용자 생성, 조회, 수정, 삭제 기능 제공
@@ -113,7 +114,7 @@ export class UsersService {
     });
 
     // 캐시 키 생성 및 삭제
-    const cacheKey = `GET:/auth/profile/${id}`;
+    const cacheKey = CacheKeyHelper.generateKey("GET", "/auth/profile", id);
     await this.cacheManager.del(cacheKey);
 
     this.logger.debug({
@@ -128,19 +129,19 @@ export class UsersService {
    * @param id 삭제할 사용자 ID
    * @throws UserNotFoundException 사용자가 존재하지 않을 경우
    */
-  async deleteUser(id: number): Promise<void> {
-    // 사용자 존재 여부 확인
-    const user = await this.prisma.user.findUnique({
-      where: { id },
-    });
+  // async deleteUser(id: number): Promise<void> {
+  //   // 사용자 존재 여부 확인
+  //   const user = await this.prisma.user.findUnique({
+  //     where: { id },
+  //   });
 
-    if (!user) {
-      throw new UserNotFoundException(); // 사용자 존재하지 않을 경우 예외 발생
-    }
+  //   if (!user) {
+  //     throw new UserNotFoundException(); // 사용자 존재하지 않을 경우 예외 발생
+  //   }
 
-    // 사용자 삭제
-    await this.prisma.user.delete({
-      where: { id },
-    });
-  }
+  //   // 사용자 삭제
+  //   await this.prisma.user.delete({
+  //     where: { id },
+  //   });
+  // }
 }

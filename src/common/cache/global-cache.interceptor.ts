@@ -1,5 +1,6 @@
 import { Injectable, ExecutionContext } from "@nestjs/common";
 import { CacheInterceptor } from "@nestjs/cache-manager";
+import { CacheKeyHelper } from "./cache-key-helper";
 
 @Injectable()
 export class GlobalCacheInterceptor extends CacheInterceptor {
@@ -21,7 +22,7 @@ export class GlobalCacheInterceptor extends CacheInterceptor {
       return undefined;
     }
     // URL 기반 키 생성
-    const key = `${request.method}:${request.url}`;
+    const key = CacheKeyHelper.generateKey(request.method, request.url);
     console.log(`[CACHE DEBUG] Generated global cache key: ${key}`);
     return key;
   }

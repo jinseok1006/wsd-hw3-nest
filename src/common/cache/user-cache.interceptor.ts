@@ -1,5 +1,6 @@
 import { Injectable, ExecutionContext } from "@nestjs/common";
 import { CacheInterceptor } from "@nestjs/cache-manager";
+import { CacheKeyHelper } from "./cache-key-helper";
 
 @Injectable()
 export class UserCacheInterceptor extends CacheInterceptor {
@@ -13,7 +14,11 @@ export class UserCacheInterceptor extends CacheInterceptor {
 
     // 사용자 ID 기반 캐시 키 생성
     if (request.user && request.user.sub) {
-      const key = `${request.method}:${request.url}:${request.user.sub}`;
+      const key = CacheKeyHelper.generateKey(
+        request.method,
+        request.url,
+        request.user.sub
+      );
       console.log(`[CACHE DEBUG] Generated user-specific cache key: ${key}`);
       return key;
     }
