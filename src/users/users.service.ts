@@ -12,10 +12,9 @@ import {
   UserNotFoundException,
   EmailAlreadyExistsException,
 } from "src/common/custom-error";
-import { CACHE_MANAGER } from "@nestjs/cache-manager";
-import { Cache } from "cache-manager";
 import { WINSTON_MODULE_NEST_PROVIDER } from "nest-winston";
 import { CacheKeyHelper } from "src/common/cache/cache-key-helper";
+import { CacheService } from "src/cache/cache.service";
 
 /**
  * 사용자 서비스: 사용자 생성, 조회, 수정, 삭제 기능 제공
@@ -24,7 +23,7 @@ import { CacheKeyHelper } from "src/common/cache/cache-key-helper";
 export class UsersService {
   constructor(
     private readonly prisma: PrismaService,
-    @Inject(CACHE_MANAGER) private cacheManager: Cache,
+    private readonly cacheService: CacheService,
     @Inject(WINSTON_MODULE_NEST_PROVIDER) private readonly logger: LoggerService
   ) {}
 
@@ -90,21 +89,30 @@ export class UsersService {
    * @param id 수정할 사용자 ID
    * @param data 사용자 수정 데이터 (이름, 이메일, 비밀번호 등)
    * @returns 수정된 사용자 정보
-   * @throws UserNotFoundException 사용자가 존재하지 않을 경우
+   * @throws EmailAlreadyExistsException 이메일이 중복될 경우
    */
   async updateUser(id: number, data: UpdateUserDto): Promise<UserResponseDto> {
-    const user = await this.prisma.user.findUnique({
-      where: { id },
-    });
+    const { email, password, ...rest } = data;
 
-    if (!user) {
-      throw new UserNotFoundException();
+    // 이메일 중복 확인
+    if (email) {
+      const emailExists = await this.prisma.user.findFirst({
+        where: {
+          email,
+          id: { not: id }, // 다른 사용자의 이메일인지 확인
+        },
+      });
+
+      if (emailExists) {
+        throw new EmailAlreadyExistsException(
+          `Email '${email}' is already in use.`
+        );
+      }
     }
-
-    const { password, ...rest } = data;
 
     const updateData = {
       ...rest,
+      email, // 이메일 업데이트 포함
       hashedPassword: password ? Base64Encoder.encode(password) : undefined,
     };
 
@@ -115,7 +123,7 @@ export class UsersService {
 
     // 캐시 키 생성 및 삭제
     const cacheKey = CacheKeyHelper.generateKey("GET", "/auth/profile", id);
-    await this.cacheManager.del(cacheKey);
+    await this.cacheService.del(cacheKey);
 
     this.logger.debug({
       message: `Cache invalidated for key: ${cacheKey}`,
@@ -124,24 +132,4 @@ export class UsersService {
 
     return new UserResponseDto(updatedUser);
   }
-  /**
-   * 사용자를 삭제합니다.
-   * @param id 삭제할 사용자 ID
-   * @throws UserNotFoundException 사용자가 존재하지 않을 경우
-   */
-  // async deleteUser(id: number): Promise<void> {
-  //   // 사용자 존재 여부 확인
-  //   const user = await this.prisma.user.findUnique({
-  //     where: { id },
-  //   });
-
-  //   if (!user) {
-  //     throw new UserNotFoundException(); // 사용자 존재하지 않을 경우 예외 발생
-  //   }
-
-  //   // 사용자 삭제
-  //   await this.prisma.user.delete({
-  //     where: { id },
-  //   });
-  // }
 }

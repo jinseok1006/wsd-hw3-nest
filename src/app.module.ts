@@ -18,6 +18,7 @@ import { CacheModule } from "@nestjs/cache-manager";
 import { APP_INTERCEPTOR } from "@nestjs/core";
 import * as redisStore from "cache-manager-redis-store";
 import { GlobalCacheInterceptor } from "./common/cache/global-cache.interceptor";
+import { AuthCoreModule } from './auth-core/auth-core.module';
 
 @Module({
   imports: [
@@ -26,18 +27,10 @@ import { GlobalCacheInterceptor } from "./common/cache/global-cache.interceptor"
     }),
     WinstonModule.forRoot(winstonOption), // 토큰을 이용한 전역 Provider
     AuthModule,
-    TokenModule,
     JobsModule,
     BookmarksModule,
     ApplicationsModule,
     ReviewsModule,
-    CacheModule.register({
-      isGlobal: true, // 전역 캐시 설정
-      store: redisStore, // Redis 스토어 사용
-      host: "localhost", // Redis 서버 주소
-      port: 6379, // Redis 서버 포트
-      ttl: 600, // 기본 TTL 설정 (초 단위)
-    }),
   ],
   providers: [
     {

@@ -4,9 +4,10 @@ import { BookmarksService } from "./bookmarks.service";
 import { PrismaModule } from "src/prisma/prisma.module";
 import { TokenModule } from "src/token/token.module";
 import { JwtModule } from "@nestjs/jwt";
+import { CacheModule } from "src/cache/cache.module";
 
 @Module({
-  imports: [PrismaModule,TokenModule, JwtModule],
+  imports: [PrismaModule, TokenModule, JwtModule],
   controllers: [BookmarksController],
   providers: [BookmarksService],
 })

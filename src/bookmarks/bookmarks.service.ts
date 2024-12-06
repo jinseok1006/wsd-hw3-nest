@@ -8,12 +8,13 @@ import { PaginatedData, PaginationDto } from "src/common/response.dto";
 import { CacheKeyHelper } from "src/common/cache/cache-key-helper";
 import { CACHE_MANAGER } from "@nestjs/cache-manager";
 import { Cache } from "cache-manager";
+import { CacheService } from "src/cache/cache.service";
 
 @Injectable()
 export class BookmarksService {
   constructor(
     private readonly prisma: PrismaService,
-    @Inject(CACHE_MANAGER) private cacheManager: Cache
+    private readonly cacheService: CacheService
   ) {}
 
   /**
@@ -78,7 +79,7 @@ export class BookmarksService {
 
     // 북마크 관련 캐시 삭제 ***** 이런 패턴매칭은 지원하지 않음 *****
     const cacheKey = CacheKeyHelper.generateKey("GET", `/bookmarks?*`, userId);
-    await this.cacheManager.del(cacheKey);
+    await this.cacheService.del(cacheKey);
     console.log(`[CACHE DEBUG] Cache cleared for key: ${cacheKey}`);
 
     return result;
