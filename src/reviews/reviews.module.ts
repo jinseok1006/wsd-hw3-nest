@@ -4,9 +4,10 @@ import { ReviewsController } from "./reviews.controller";
 import { TokenModule } from "src/token/token.module";
 import { JwtModule } from "@nestjs/jwt";
 import { PrismaModule } from "src/prisma/prisma.module";
+import { AuthCoreModule } from "src/auth-core/auth-core.module";
 
 @Module({
-  imports: [TokenModule, JwtModule, PrismaModule],
+  imports: [AuthCoreModule, PrismaModule],
   controllers: [ReviewsController],
   providers: [ReviewsService],
 })

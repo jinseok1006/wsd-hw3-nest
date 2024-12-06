@@ -1,5 +1,5 @@
 // src/users/users.service.ts
-import { Injectable } from "@nestjs/common";
+import { Inject, Injectable, LoggerService } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service";
 import { User } from "@prisma/client";
 import { Base64Encoder } from "src/utils/base64Encoder";
@@ -12,13 +12,20 @@ import {
   UserNotFoundException,
   EmailAlreadyExistsException,
 } from "src/common/custom-error";
+import { WINSTON_MODULE_NEST_PROVIDER } from "nest-winston";
+import { CacheKeyHelper } from "src/common/cache/cache-key-helper";
+import { CacheService } from "src/cache/cache.service";
 
 /**
  * 사용자 서비스: 사용자 생성, 조회, 수정, 삭제 기능 제공
  */
 @Injectable()
 export class UsersService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly cacheService: CacheService,
+    @Inject(WINSTON_MODULE_NEST_PROVIDER) private readonly logger: LoggerService
+  ) {}
 
   /**
    * 모든 사용자를 조회합니다.
@@ -82,54 +89,41 @@ export class UsersService {
    * @param id 수정할 사용자 ID
    * @param data 사용자 수정 데이터 (이름, 이메일, 비밀번호 등)
    * @returns 수정된 사용자 정보
-   * @throws UserNotFoundException 사용자가 존재하지 않을 경우
+   * @throws EmailAlreadyExistsException 이메일이 중복될 경우
    */
   async updateUser(id: number, data: UpdateUserDto): Promise<UserResponseDto> {
-    // 사용자 존재 여부 확인
-    const user = await this.prisma.user.findUnique({
-      where: { id },
-    });
+    const { email, password, ...rest } = data;
 
-    if (!user) {
-      throw new UserNotFoundException(); // 사용자 존재하지 않을 경우 예외 발생
+    // 이메일 중복 확인
+    if (email) {
+      const emailExists = await this.prisma.user.findFirst({
+        where: {
+          email,
+          id: { not: id }, // 다른 사용자의 이메일인지 확인
+        },
+      });
+
+      if (emailExists) {
+        throw new EmailAlreadyExistsException(
+          `Email '${email}' is already in use.`
+        );
+      }
     }
 
-    // DTO에서 비밀번호를 제외한 나머지 필드 추출
-    const { password, ...rest } = data;
-
-    // 비밀번호가 제공된 경우 인코딩 후 업데이트 데이터에 포함
     const updateData = {
       ...rest,
+      email, // 이메일 업데이트 포함
       hashedPassword: password ? Base64Encoder.encode(password) : undefined,
     };
 
-    // 사용자 업데이트
     const updatedUser = await this.prisma.user.update({
       where: { id },
       data: updateData,
     });
 
+    // 캐시 키 생성 및 삭제
+    this.cacheService.invalidateProfileCache(id);
+
     return new UserResponseDto(updatedUser);
-  }
-
-  /**
-   * 사용자를 삭제합니다.
-   * @param id 삭제할 사용자 ID
-   * @throws UserNotFoundException 사용자가 존재하지 않을 경우
-   */
-  async deleteUser(id: number): Promise<void> {
-    // 사용자 존재 여부 확인
-    const user = await this.prisma.user.findUnique({
-      where: { id },
-    });
-
-    if (!user) {
-      throw new UserNotFoundException(); // 사용자 존재하지 않을 경우 예외 발생
-    }
-
-    // 사용자 삭제
-    await this.prisma.user.delete({
-      where: { id },
-    });
   }
 }

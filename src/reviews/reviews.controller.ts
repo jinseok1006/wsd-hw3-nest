@@ -10,6 +10,7 @@ import {
   Query,
   HttpCode,
   HttpStatus,
+  UseInterceptors,
 } from "@nestjs/common";
 import { ReviewsService } from "./reviews.service";
 import { JwtAuthGuard } from "src/common/jwt-auth.guard";
@@ -18,9 +19,16 @@ import { SuccessResponseDto } from "src/common/response.dto";
 import { CompanyReviewResponseDto } from "./dto/company-review-response.dto";
 import { GetCompanyReviewsQueryDto } from "./dto/get-company-reviews-query.dto";
 import { DeleteCompanyReviewResponseDto } from "./dto/delete-company-review-response.dto";
-import { ApiBearerAuth, ApiOperation, ApiParam, ApiTags } from "@nestjs/swagger";
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiParam,
+  ApiTags,
+} from "@nestjs/swagger";
 import { ApiSuccessResponse } from "src/utils/api-success-response.decorator";
 import { ApiCommonErrorResponses } from "src/common/api-response.decorator";
+import { SkipGlobalCache } from "src/common/cache/skip-global-cache.decorator";
+import { UserCacheInterceptor } from "src/common/cache/user-cache.interceptor";
 
 @ApiTags("Company Reviews")
 @Controller("reviews")
