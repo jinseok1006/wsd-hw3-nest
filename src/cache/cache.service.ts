@@ -112,7 +112,7 @@ export class CacheService {
 
   // 리뷰 캐시 무효화
   async invalidateReviewsCache(companyId: number): Promise<void> {
-    const key = CacheKeyHelper.generateKey("GET", "/reviews?*", companyId);
+    const key = CacheKeyHelper.generateKey("GET", `/reviews/${companyId}?*`);
     this.logger.debug({
       message: `[CACHE DEBUG] Cache cleared for key: ${key}`,
     });
