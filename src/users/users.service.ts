@@ -1,5 +1,5 @@
 // src/users/users.service.ts
-import { Injectable } from "@nestjs/common";
+import { Inject, Injectable, LoggerService } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service";
 import { User } from "@prisma/client";
 import { Base64Encoder } from "src/utils/base64Encoder";
@@ -12,13 +12,20 @@ import {
   UserNotFoundException,
   EmailAlreadyExistsException,
 } from "src/common/custom-error";
+import { CACHE_MANAGER } from "@nestjs/cache-manager";
+import { Cache } from "cache-manager";
+import { WINSTON_MODULE_NEST_PROVIDER } from "nest-winston";
 
 /**
  * 사용자 서비스: 사용자 생성, 조회, 수정, 삭제 기능 제공
  */
 @Injectable()
 export class UsersService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
+    @Inject(WINSTON_MODULE_NEST_PROVIDER) private readonly logger: LoggerService
+  ) {}
 
   /**
    * 모든 사용자를 조회합니다.
@@ -85,33 +92,37 @@ export class UsersService {
    * @throws UserNotFoundException 사용자가 존재하지 않을 경우
    */
   async updateUser(id: number, data: UpdateUserDto): Promise<UserResponseDto> {
-    // 사용자 존재 여부 확인
     const user = await this.prisma.user.findUnique({
       where: { id },
     });
 
     if (!user) {
-      throw new UserNotFoundException(); // 사용자 존재하지 않을 경우 예외 발생
+      throw new UserNotFoundException();
     }
 
-    // DTO에서 비밀번호를 제외한 나머지 필드 추출
     const { password, ...rest } = data;
 
-    // 비밀번호가 제공된 경우 인코딩 후 업데이트 데이터에 포함
     const updateData = {
       ...rest,
       hashedPassword: password ? Base64Encoder.encode(password) : undefined,
     };
 
-    // 사용자 업데이트
     const updatedUser = await this.prisma.user.update({
       where: { id },
       data: updateData,
     });
 
+    // 캐시 키 생성 및 삭제
+    const cacheKey = `GET:/auth/profile/${id}`;
+    await this.cacheManager.del(cacheKey);
+
+    this.logger.debug({
+      message: `Cache invalidated for key: ${cacheKey}`,
+      context: UsersService.name,
+    });
+
     return new UserResponseDto(updatedUser);
   }
-
   /**
    * 사용자를 삭제합니다.
    * @param id 삭제할 사용자 ID

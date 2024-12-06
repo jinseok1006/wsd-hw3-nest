@@ -6,6 +6,7 @@ import { JwtModule } from "@nestjs/jwt";
 import { AuthService } from "./auth.service";
 import { TokenModule } from "src/token/token.module";
 import { ConfigModule, ConfigService } from "@nestjs/config";
+import { UserCacheInterceptor } from "src/common/cache/user-cache.interceptor";
 
 @Module({
   imports: [
@@ -24,7 +25,7 @@ import { ConfigModule, ConfigService } from "@nestjs/config";
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService],
+  providers: [AuthService, UserCacheInterceptor],
   exports: [AuthService],
 })
 export class AuthModule {}

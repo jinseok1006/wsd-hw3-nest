@@ -32,6 +32,7 @@ import { GlobalCacheInterceptor } from "./common/cache/global-cache.interceptor"
     ApplicationsModule,
     ReviewsModule,
     CacheModule.register({
+      isGlobal: true, // 전역 캐시 설정
       store: redisStore, // Redis 스토어 사용
       host: "localhost", // Redis 서버 주소
       port: 6379, // Redis 서버 포트

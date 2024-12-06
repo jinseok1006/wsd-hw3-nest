@@ -10,6 +10,7 @@ import {
   Put,
   Request,
   UseGuards,
+  UseInterceptors,
 } from "@nestjs/common";
 import { ApiCommonErrorResponses } from "src/common/api-response.decorator";
 import { PaginationDto, SuccessResponseDto } from "src/common/response.dto";
@@ -25,6 +26,8 @@ import { RefreshTokenRequestDto } from "./dto/refresh-token-request.dto";
 import { ApiBearerAuth, ApiExtraModels, ApiOperation, ApiTags } from "@nestjs/swagger";
 import { UpdateUserDto } from "src/users/dto/update-user.dto"; // UpdateUserDto 임포트
 import { ApiSuccessResponse } from "src/utils/api-success-response.decorator";
+import { SkipGlobalCache } from "src/common/cache/skip-global-cache.decorator";
+import { UserCacheInterceptor } from "src/common/cache/user-cache.interceptor";
 
 @ApiExtraModels(PaginationDto)
 @ApiTags("Auth")
@@ -34,7 +37,7 @@ export class AuthController {
     @Inject(WINSTON_MODULE_NEST_PROVIDER)
     private readonly logger: LoggerService,
     private readonly usersService: UsersService,
-    private readonly authService: AuthService
+    private readonly authService: AuthService,
   ) {}
 
   @Post("register")
@@ -65,6 +68,8 @@ export class AuthController {
   // 프로필 확인
   @Get("profile")
   @UseGuards(JwtAuthGuard) // JwtAuthGuard로 인증된 사용자만 접근 가능
+  @SkipGlobalCache() // 전역 캐시 스킵
+  @UseInterceptors(UserCacheInterceptor)
   @ApiBearerAuth()
   @ApiCommonErrorResponses({ badRequest: true, unauthorized: true })
   @ApiSuccessResponse(UserResponseDto, "프로필 조회 성공")

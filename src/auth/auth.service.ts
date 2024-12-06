@@ -16,6 +16,8 @@ import {
   InvalidTokenException,
   TokenExpiredException,
 } from "src/common/custom-error";
+import { CACHE_MANAGER } from "@nestjs/cache-manager";
+import { Cache } from "cache-manager";
 
 /**
  * 인증 서비스: 사용자 로그인, 리프레시 토큰 갱신 등의 기능 제공
@@ -27,7 +29,8 @@ export class AuthService {
     private readonly logger: LoggerService,
     private jwtService: JwtService,
     private readonly prismaService: PrismaService,
-    private readonly tokenService: TokenService
+    private readonly tokenService: TokenService,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache
   ) {}
 
   /**
