@@ -1,14 +1,20 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import { Inject, Injectable, NotFoundException } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service";
 import { CreateBookmarkDto } from "./dto/create-bookmark.dto";
 import { BookmarkListQueryDto } from "./dto/bookmark-list-query.dto";
 import { BookmarkResponseDto } from "./dto/bookmark-response.dto";
 import { BookmarkListDto } from "./dto/bookmark-list-response.dto";
 import { PaginatedData, PaginationDto } from "src/common/response.dto";
+import { CacheKeyHelper } from "src/common/cache/cache-key-helper";
+import { CACHE_MANAGER } from "@nestjs/cache-manager";
+import { Cache } from "cache-manager";
 
 @Injectable()
 export class BookmarksService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache
+  ) {}
 
   /**
    * 북마크를 추가하거나 제거합니다 (토글 방식).
@@ -43,13 +49,15 @@ export class BookmarksService {
       },
     });
 
+    let result: BookmarkResponseDto;
+
     if (existingBookmark) {
       // 북마크가 이미 존재하면 삭제 (unbookmark)
       await this.prisma.bookmark.delete({
         where: { id: existingBookmark.id },
       });
 
-      return {
+      result = {
         id: existingBookmark.id,
         status: "unbookmarked",
       };
@@ -62,11 +70,18 @@ export class BookmarksService {
         },
       });
 
-      return {
+      result = {
         id: newBookmark.id,
         status: "bookmarked",
       };
     }
+
+    // 북마크 관련 캐시 삭제 ***** 이런 패턴매칭은 지원하지 않음 *****
+    const cacheKey = CacheKeyHelper.generateKey("GET", `/bookmarks?*`, userId);
+    await this.cacheManager.del(cacheKey);
+    console.log(`[CACHE DEBUG] Cache cleared for key: ${cacheKey}`);
+
+    return result;
   }
 
   /**

@@ -7,6 +7,7 @@ import {
   UseGuards,
   Request,
   HttpStatus,
+  UseInterceptors,
 } from "@nestjs/common";
 import { BookmarksService } from "./bookmarks.service";
 import { CreateBookmarkDto } from "./dto/create-bookmark.dto";
@@ -18,6 +19,8 @@ import { SuccessResponseDto } from "src/common/response.dto";
 import { BookmarkResponseDto } from "./dto/bookmark-response.dto";
 import { BookmarkListDto } from "./dto/bookmark-list-response.dto";
 import { ApiCommonErrorResponses } from "src/common/api-response.decorator";
+import { SkipGlobalCache } from "src/common/cache/skip-global-cache.decorator";
+import { UserCacheInterceptor } from "src/common/cache/user-cache.interceptor";
 // import { BookmarkListResponseDto } from "./dto/bookmark-list-response.dto";
 
 @Controller("bookmarks")
@@ -46,6 +49,8 @@ export class BookmarksController {
 
   // 북마크 목록 조회
   @Get()
+  @SkipGlobalCache() // Skip global cache
+  @UseInterceptors(UserCacheInterceptor)
   @ApiBearerAuth()
   @ApiCommonErrorResponses({ badRequest: true, unauthorized: true })
   @ApiSuccessResponse(
