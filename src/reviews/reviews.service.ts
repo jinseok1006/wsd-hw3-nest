@@ -1,6 +1,8 @@
 import {
   ForbiddenException,
+  Inject,
   Injectable,
+  LoggerService,
   NotFoundException,
 } from "@nestjs/common";
 import { CreateCompanyReviewDto } from "./dto/create-company-review.dto";
@@ -9,13 +11,19 @@ import { PrismaService } from "src/prisma/prisma.service";
 import { GetCompanyReviewsQueryDto } from "./dto/get-company-reviews-query.dto";
 import { DeleteCompanyReviewResponseDto } from "./dto/delete-company-review-response.dto";
 import { PaginatedData, PaginationDto } from "src/common/response.dto";
+import { CacheKeyHelper } from "src/common/cache/cache-key-helper";
+import { CacheService } from "src/cache/cache.service";
+import { WINSTON_MODULE_NEST_PROVIDER } from "nest-winston";
 
 /**
  * 회사 리뷰 서비스: 회사 리뷰 생성, 조회, 삭제 기능 제공
  */
 @Injectable()
 export class ReviewsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService,
+    private readonly cacheService: CacheService,
+    @Inject(WINSTON_MODULE_NEST_PROVIDER) private readonly logger: LoggerService
+  ) {}
 
   /**
    * 회사 리뷰를 생성합니다.
@@ -57,6 +65,10 @@ export class ReviewsService {
         updatedAt: true,
       },
     });
+
+    // 캐시제거
+    this.cacheService.invalidateReviewsCache(companyId);
+
 
     return newReview;
   }
@@ -158,6 +170,9 @@ export class ReviewsService {
     await this.prisma.companyReview.delete({
       where: { id: reviewId },
     });
+
+    // 캐시제거
+    this.cacheService.invalidateReviewsCache(review.companyId);
 
     return {
       id: review.id,

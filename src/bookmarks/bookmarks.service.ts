@@ -1,14 +1,27 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import {
+  Inject,
+  Injectable,
+  LoggerService,
+  NotFoundException,
+} from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service";
 import { CreateBookmarkDto } from "./dto/create-bookmark.dto";
 import { BookmarkListQueryDto } from "./dto/bookmark-list-query.dto";
 import { BookmarkResponseDto } from "./dto/bookmark-response.dto";
 import { BookmarkListDto } from "./dto/bookmark-list-response.dto";
 import { PaginatedData, PaginationDto } from "src/common/response.dto";
+import { CacheKeyHelper } from "src/common/cache/cache-key-helper";
+
+import { CacheService } from "src/cache/cache.service";
+import { WINSTON_MODULE_NEST_PROVIDER } from "nest-winston";
 
 @Injectable()
 export class BookmarksService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly cacheService: CacheService,
+    @Inject(WINSTON_MODULE_NEST_PROVIDER) private readonly logger: LoggerService
+  ) {}
 
   /**
    * 북마크를 추가하거나 제거합니다 (토글 방식).
@@ -43,13 +56,15 @@ export class BookmarksService {
       },
     });
 
+    let result: BookmarkResponseDto;
+
     if (existingBookmark) {
       // 북마크가 이미 존재하면 삭제 (unbookmark)
       await this.prisma.bookmark.delete({
         where: { id: existingBookmark.id },
       });
 
-      return {
+      result = {
         id: existingBookmark.id,
         status: "unbookmarked",
       };
@@ -62,11 +77,16 @@ export class BookmarksService {
         },
       });
 
-      return {
+      result = {
         id: newBookmark.id,
         status: "bookmarked",
       };
     }
+
+    // 북마크 관련 캐시 삭제
+    this.cacheService.invalidateBookmarksCache(userId);
+
+    return result;
   }
 
   /**

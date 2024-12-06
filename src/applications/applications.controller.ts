@@ -10,6 +10,7 @@ import {
   Query,
   Req,
   UseGuards,
+  UseInterceptors,
 } from "@nestjs/common";
 import { ApplicationsService } from "./applications.service";
 import { CreateApplicationDto } from "./dto/create-application.dto";
@@ -22,6 +23,8 @@ import { GetApplicationsResponseDto } from "./dto/get-applications-response.dto"
 import { CancelApplicationResponseDto } from "./dto/cancel-application-response.dto";
 import { ApiSuccessResponse } from "src/utils/api-success-response.decorator";
 import { ApiCommonErrorResponses } from "src/common/api-response.decorator";
+import { SkipGlobalCache } from "src/common/cache/skip-global-cache.decorator";
+import { UserCacheInterceptor } from "src/common/cache/user-cache.interceptor";
 
 @Controller("applications")
 @UseGuards(JwtAuthGuard)
@@ -51,6 +54,8 @@ export class ApplicationsController {
   }
 
   @Get()
+  @SkipGlobalCache()
+  @UseInterceptors(UserCacheInterceptor)
   @ApiBearerAuth()
   @ApiSuccessResponse(GetApplicationsResponseDto, "지원서 목록 조회")
   @ApiCommonErrorResponses({ badRequest: true, unauthorized: true })

@@ -14,12 +14,16 @@ import { WINSTON_MODULE_NEST_PROVIDER } from "nest-winston";
 import { CreateApplicationResponseDto } from "./dto/create-application-response.dto";
 import { CancelApplicationResponseDto } from "./dto/cancel-application-response.dto";
 import { ApplicationCancellationException } from "src/common/custom-error";
+import { CacheKeyHelper } from "src/common/cache/cache-key-helper";
+import { CacheService } from "src/cache/cache.service";
 
 @Injectable()
 export class ApplicationsService {
   constructor(
     private readonly prisma: PrismaService,
-    @Inject(WINSTON_MODULE_NEST_PROVIDER) private readonly logger: LoggerService
+    @Inject(WINSTON_MODULE_NEST_PROVIDER)
+    private readonly logger: LoggerService,
+    private readonly cacheService: CacheService
   ) {}
 
   /**
@@ -43,6 +47,9 @@ export class ApplicationsService {
     if (existingApplication) {
       throw new ConflictException("이미 지원한 공고입니다.");
     }
+
+    // 캐시제거
+    this.cacheService.invalidateApplicationsCache(userId);
 
     return this.prisma.application.create({
       data: {
@@ -130,6 +137,10 @@ export class ApplicationsService {
         status: "CANCELED",
       },
     });
+
+    // 캐시제거
+    this.cacheService.invalidateApplicationsCache(userId);
+
 
     return {
       id: updatedApplication.id,

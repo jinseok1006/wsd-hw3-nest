@@ -6,25 +6,13 @@ import { JwtModule } from "@nestjs/jwt";
 import { AuthService } from "./auth.service";
 import { TokenModule } from "src/token/token.module";
 import { ConfigModule, ConfigService } from "@nestjs/config";
+import { CacheModule as NestCacheModule } from "@nestjs/cache-manager";
+import * as redisStore from "cache-manager-redis-store";
+import { AuthCoreModule } from "src/auth-core/auth-core.module";
 
 @Module({
-  imports: [
-    PrismaModule,
-    UsersModule,
-    TokenModule,
-    JwtModule.registerAsync({
-      imports: [ConfigModule], // ConfigModule 필요
-      inject: [ConfigService],
-      useFactory: async (configService: ConfigService) => ({
-        secret: configService.get<string>("JWT_SECRET"), // ConfigService를 통해 환경 변수 가져오기
-        signOptions: {
-          expiresIn: "1h",
-        },
-      }),
-    }),
-  ],
+  imports: [PrismaModule, UsersModule, AuthCoreModule],
   controllers: [AuthController],
   providers: [AuthService],
-  exports: [AuthService],
 })
 export class AuthModule {}
