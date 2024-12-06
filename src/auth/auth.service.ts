@@ -15,6 +15,7 @@ import {
   UserNotFoundException,
   InvalidTokenException,
   TokenExpiredException,
+  TokenBlacklistedException,
 } from "src/common/custom-error";
 import { CACHE_MANAGER } from "@nestjs/cache-manager";
 import { Cache } from "cache-manager";
@@ -92,13 +93,13 @@ export class AuthService {
 
     // 리프레시 토큰이 블랙리스트에 있는지 확인
     if (this.tokenService.isBlacklisted(refresh_token)) {
-      throw new InvalidTokenException("유효하지 않은 리프레시 토큰입니다.");
+      throw new TokenBlacklistedException();
     }
 
     // 리프레시 토큰으로 사용자 ID 조회
     const userId = this.tokenService.getRefreshToken(refresh_token);
     if (!userId) {
-      throw new InvalidTokenException("유효하지 않은 리프레시 토큰입니다.");
+      throw new InvalidTokenException("해당 계정으로 등록된 리프레시 토큰이 없습니다.");
     }
 
     try {
