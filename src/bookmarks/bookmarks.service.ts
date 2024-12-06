@@ -10,7 +10,6 @@ import { BookmarkListQueryDto } from "./dto/bookmark-list-query.dto";
 import { BookmarkResponseDto } from "./dto/bookmark-response.dto";
 import { BookmarkListDto } from "./dto/bookmark-list-response.dto";
 import { PaginatedData, PaginationDto } from "src/common/response.dto";
-import { CacheKeyHelper } from "src/common/cache/cache-key-helper";
 
 import { CacheService } from "src/cache/cache.service";
 import { WINSTON_MODULE_NEST_PROVIDER } from "nest-winston";

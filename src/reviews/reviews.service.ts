@@ -11,7 +11,6 @@ import { PrismaService } from "src/prisma/prisma.service";
 import { GetCompanyReviewsQueryDto } from "./dto/get-company-reviews-query.dto";
 import { DeleteCompanyReviewResponseDto } from "./dto/delete-company-review-response.dto";
 import { PaginatedData, PaginationDto } from "src/common/response.dto";
-import { CacheKeyHelper } from "src/common/cache/cache-key-helper";
 import { CacheService } from "src/cache/cache.service";
 import { WINSTON_MODULE_NEST_PROVIDER } from "nest-winston";
 
