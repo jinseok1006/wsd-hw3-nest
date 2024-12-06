@@ -1,4 +1,9 @@
-import { Inject, Injectable, NotFoundException } from "@nestjs/common";
+import {
+  Inject,
+  Injectable,
+  LoggerService,
+  NotFoundException,
+} from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service";
 import { CreateBookmarkDto } from "./dto/create-bookmark.dto";
 import { BookmarkListQueryDto } from "./dto/bookmark-list-query.dto";
@@ -6,15 +11,16 @@ import { BookmarkResponseDto } from "./dto/bookmark-response.dto";
 import { BookmarkListDto } from "./dto/bookmark-list-response.dto";
 import { PaginatedData, PaginationDto } from "src/common/response.dto";
 import { CacheKeyHelper } from "src/common/cache/cache-key-helper";
-import { CACHE_MANAGER } from "@nestjs/cache-manager";
-import { Cache } from "cache-manager";
+
 import { CacheService } from "src/cache/cache.service";
+import { WINSTON_MODULE_NEST_PROVIDER } from "nest-winston";
 
 @Injectable()
 export class BookmarksService {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly cacheService: CacheService
+    private readonly cacheService: CacheService,
+    @Inject(WINSTON_MODULE_NEST_PROVIDER) private readonly logger: LoggerService
   ) {}
 
   /**
@@ -77,10 +83,12 @@ export class BookmarksService {
       };
     }
 
-    // 북마크 관련 캐시 삭제 ***** 이런 패턴매칭은 지원하지 않음 *****
+    // 북마크 관련 캐시 삭제
     const cacheKey = CacheKeyHelper.generateKey("GET", `/bookmarks?*`, userId);
-    await this.cacheService.del(cacheKey);
-    console.log(`[CACHE DEBUG] Cache cleared for key: ${cacheKey}`);
+    await this.cacheService.deleteKeysByPattern(cacheKey);
+    this.logger.debug({
+      message: `[CACHE DEBUG] Cache cleared for key: ${cacheKey}`,
+    });
 
     return result;
   }

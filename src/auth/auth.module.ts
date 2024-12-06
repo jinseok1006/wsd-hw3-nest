@@ -14,6 +14,5 @@ import { AuthCoreModule } from "src/auth-core/auth-core.module";
   imports: [PrismaModule, UsersModule, AuthCoreModule],
   controllers: [AuthController],
   providers: [AuthService],
-  exports: [AuthService],
 })
 export class AuthModule {}

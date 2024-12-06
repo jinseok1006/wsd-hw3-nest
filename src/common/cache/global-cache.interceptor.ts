@@ -1,6 +1,7 @@
-import { Injectable, ExecutionContext } from "@nestjs/common";
+import { Injectable, ExecutionContext, CallHandler } from "@nestjs/common";
 import { CacheInterceptor } from "@nestjs/cache-manager";
 import { CacheKeyHelper } from "./cache-key-helper";
+import { Observable } from "rxjs";
 
 @Injectable()
 export class GlobalCacheInterceptor extends CacheInterceptor {
@@ -26,4 +27,6 @@ export class GlobalCacheInterceptor extends CacheInterceptor {
     console.log(`[CACHE DEBUG] Generated global cache key: ${key}`);
     return key;
   }
+
+    
 }
