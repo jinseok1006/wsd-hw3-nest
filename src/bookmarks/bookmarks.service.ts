@@ -84,11 +84,7 @@ export class BookmarksService {
     }
 
     // 북마크 관련 캐시 삭제
-    const cacheKey = CacheKeyHelper.generateKey("GET", `/bookmarks?*`, userId);
-    await this.cacheService.deleteKeysByPattern(cacheKey);
-    this.logger.debug({
-      message: `[CACHE DEBUG] Cache cleared for key: ${cacheKey}`,
-    });
+    this.cacheService.invalidateBookmarksCache(userId);
 
     return result;
   }

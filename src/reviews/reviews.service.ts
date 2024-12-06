@@ -67,11 +67,8 @@ export class ReviewsService {
     });
 
     // 캐시제거
-    const cacheKey = CacheKeyHelper.generateKey("GET", `/reviews/${companyId}`);
-    await this.cacheService.deleteKeysByPattern(cacheKey);
-    this.logger.debug({
-      message: `[CACHE DEBUG] Cache cleared for key: ${cacheKey}`,
-    });
+    this.cacheService.invalidateReviewsCache(companyId);
+
 
     return newReview;
   }
@@ -175,11 +172,7 @@ export class ReviewsService {
     });
 
     // 캐시제거
-    const cacheKey = CacheKeyHelper.generateKey("GET", `/reviews/${review.companyId}`);
-    await this.cacheService.deleteKeysByPattern(cacheKey);
-    this.logger.debug({
-      message: `[CACHE DEBUG] Cache cleared for key: ${cacheKey}`,
-    });
+    this.cacheService.invalidateReviewsCache(review.companyId);
 
     return {
       id: review.id,

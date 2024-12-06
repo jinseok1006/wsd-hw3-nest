@@ -122,13 +122,7 @@ export class UsersService {
     });
 
     // 캐시 키 생성 및 삭제
-    const cacheKey = CacheKeyHelper.generateKey("GET", "/auth/profile", id);
-    await this.cacheService.del(cacheKey);
-
-    this.logger.debug({
-      message: `Cache invalidated for key: ${cacheKey}`,
-      context: UsersService.name,
-    });
+    this.cacheService.invalidateProfileCache(id);
 
     return new UserResponseDto(updatedUser);
   }
