@@ -9,6 +9,7 @@ import { ApplicationsModule } from "./applications/applications.module";
 import { ReviewsModule } from "./reviews/reviews.module";
 import { APP_INTERCEPTOR } from "@nestjs/core";
 import { GlobalCacheInterceptor } from "./common/cache/global-cache.interceptor";
+import { MetadataModule } from './metadata/metadata.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { GlobalCacheInterceptor } from "./common/cache/global-cache.interceptor"
     BookmarksModule,
     ApplicationsModule,
     ReviewsModule,
+    MetadataModule,
   ],
   providers: [
     {

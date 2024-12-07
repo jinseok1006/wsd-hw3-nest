@@ -46,6 +46,12 @@ export class GetJobsResponseDto {
   annualTo: number; // 연차 최대값
 
   @ApiProperty({
+    description: '연봉',
+    example: 2000
+  })
+  salary: number;
+
+  @ApiProperty({
     description: "회사 정보",
     example: { id: 1, name: "ABC Corp" },
   })
