@@ -116,7 +116,7 @@ export class JobsService {
         annualFrom: true,
         annualTo: true,
         image: true,
-        salary:true,
+        salary: true,
         Company: {
           select: {
             id: true,
@@ -139,7 +139,7 @@ export class JobsService {
     const total = await this.prisma.jobPosting.count({ where });
 
     // 페이지네이션 데이터 생성
-    const pagination = new PaginationDto(total, Math.ceil(total / take), +page);
+    const pagination = new PaginationDto(+page, total, Math.ceil(total / take));
     return { data: jobs, pagination };
   }
 
@@ -226,7 +226,7 @@ export class JobsService {
             name: true,
           },
         },
-        salary:true,
+        salary: true,
         Bookmark: {
           where: { userId },
           select: {
