@@ -84,6 +84,7 @@ export class BookmarksService {
 
     // 북마크 관련 캐시 삭제
     this.cacheService.invalidateBookmarksCache(userId);
+    this.cacheService.invalidateJobsCache(userId);
 
     return result;
   }

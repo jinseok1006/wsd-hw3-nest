@@ -118,4 +118,13 @@ export class CacheService {
     });
     await this.deleteKeysByPattern(key);
   }
+
+  // 북마크 캐시 무효화
+  async invalidateJobsCache(userId: number): Promise<void> {
+    const key = CacheKeyHelper.generateKey("GET", `/jobs?*`, userId);
+    this.logger.debug({
+      message: `[CACHE DEBUG] Cache cleared for key: ${key}`,
+    });
+    await this.deleteKeysByPattern(key);
+  }
 }
