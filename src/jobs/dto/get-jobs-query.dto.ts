@@ -79,7 +79,7 @@ export class GetJobsQueryDto {
   salaryTo?: number;
 
   @ApiProperty({
-    description: "기술 스택 필터링 (예: React, Node.js)",
+    description: "기술 스택 필터링 (/metadata/tech-stacks 참고)",
     required: false,
   })
   @IsOptional()
@@ -87,7 +87,7 @@ export class GetJobsQueryDto {
   tech?: string;
 
   @ApiProperty({
-    description: "키워드 검색 (예: 개발자, 엔지니어)",
+    description: "키워드 검색",
     required: false,
   })
   @IsOptional()
@@ -103,7 +103,7 @@ export class GetJobsQueryDto {
   companyName?: string;
 
   @ApiProperty({
-    description: "포지션 검색 (예: 백엔드 개발자)",
+    description: "포지션 검색 (/metadata/developer-positions 참고)",
     required: false,
   })
   @IsOptional()
