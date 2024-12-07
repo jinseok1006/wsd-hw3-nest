@@ -1,4 +1,3 @@
-
 services:
   app:
     build:
@@ -13,7 +12,9 @@ services:
     depends_on:
       - redis
     ports:
-      - "3000:3000"
+      - "80:3000"
+    networks:
+      - wsdapp_db_network # MySQL과 통신할 네트워크
 
   redis:
     image: redis:7
@@ -22,3 +23,9 @@ services:
     command: ["redis-server"]
     ports:
       - "6379:6379"
+    networks:
+      - wsdapp_db_network # Redis도 동일 네트워크에 추가 가능
+
+networks:
+  wsdapp_db_network:
+    external: true # 외부 네트워크(MySQL 네트워크) 사용
