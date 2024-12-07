@@ -69,7 +69,7 @@ src/
 
 ---
 
-## 크롤링 데이터 파이프라인
+## [크롤링 데이터 파이프라인](https://github.com/jinseok1006/wsd-hw3-crawling)
 
 채용공고 데이터를 스크래핑하고 정제하여 **데이터베이스로 통합**하는 다단계 파이프라인을 구현합니다.
 
@@ -87,7 +87,7 @@ src/
 ### 환경 변수 설정 (.env.production 예시)
 
 ```bash
-DATABASE_URL="mysql://<user>:<bpass>@<ip>:<port>/<dbname>"
+DATABASE_URL="mysql://<user>:<dbpass>@<ip>:<port>/<dbname>"
 NODE_ENV="production"
 JWT_SECRET="<jwtsecret>"
 REDIS_HOST=redis
@@ -96,8 +96,8 @@ REDIS_PORT=6379
 
 ### 초기 데이터 주입
 
-[wsd-hw3-crawling](https://github.com/jinseok1006/wsd-hw3-crawling)을 참고하여 초기 데이터 주입
-또는 wsdapp_backup.sql 을 mysql 데이터베이스에 직접 주입
+- [wsd-hw3-crawling](https://github.com/jinseok1006/wsd-hw3-crawling)을 참고하여 초기 데이터 주입
+- 또는 wsdapp_backup.sql 을 mysql 데이터베이스에 직접 주입
 
 
 ### 빌드 및 실행
