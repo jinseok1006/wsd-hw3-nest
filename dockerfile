@@ -1,9 +1,10 @@
 # Stage 1: Build Stage
 FROM --platform=linux/amd64 node:18
 
-# 빌드 시 DATABASE_URL 환경 변수를 설정
-ARG DATABASE_URL
-ENV DATABASE_URL=$DATABASE_URL
+RUN apt-get update && apt-get install -y wget
+RUN wget https://github.com/jwilder/dockerize/releases/download/v0.6.1/dockerize-linux-amd64-v0.6.1.tar.gz \
+    && tar -C /usr/local/bin -xzf dockerize-linux-amd64-v0.6.1.tar.gz \
+    && rm dockerize-linux-amd64-v0.6.1.tar.gz
 
 # 컨테이너 작업 디렉토리 설정
 WORKDIR /usr/src/app
@@ -17,7 +18,6 @@ RUN npx prisma generate
 RUN npm run build
 
 RUN npm prune --production
-
 
 
 EXPOSE 3000

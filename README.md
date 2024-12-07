@@ -2,7 +2,7 @@
 
 본 프로젝트는 **구인구직 사이트의 채용공고 데이터를 크롤링**하여 수집하고, 이를 **MySQL** 데이터베이스에 저장한 뒤, **NestJS** 기반의 **REST API**로 제공하는 백엔드 서버입니다. **JWT 인증**, **Redis 캐싱**, **Swagger 문서화**, **JCloud 배포** 등 실제 서비스 운영 환경을 고려한 다양한 기능을 구현하였습니다.
 
----
+
 
 ## 주요 특징
 
@@ -21,7 +21,7 @@
 - **로깅 시스템**: 요청/응답 및 에러 발생 시 로깅 시스템(Winston) 적용.
 - **글로벌 에러 핸들러**: 모든 오류에 대해 일관된 에러 응답 형식 제공. 커스텀 에러 클래스 정의.
    
----
+
 
 ## 디렉토리 구조 (주요 모듈만 발췌)
 
@@ -55,7 +55,12 @@ src/
 └─ utils/                 # 유틸 함수 (Base64 인코딩, API 응답 데코레이터 등)
 ```
 
----
+### 추가 디렉토리
+
+- ./db: MySQL 데이터베이스의 데이터를 영구 저장하기 위한 볼륨.
+- ./logs: 애플리케이션과 서비스의 로그를 저장하는 디렉토리.
+
+
 
 ## 기술 스택
 
@@ -80,38 +85,66 @@ src/
    - 직군/스택/회사 정보와 연결하여 구조화된 관계형 데이터 유지
 
 
----
 
 ## 실행 방법
 
-### 환경 변수 설정 (.env.production 예시)
+Docker Compose를 사용하여 **Nest.js 앱**, **Redis**, **MySQL 데이터베이스**를 한 번에 실행할 수 있습니다. 이를 위해 아래의 `.env.production` 파일을 프로젝트 루트 디렉토리에 작성하세요.
 
-```bash
-DATABASE_URL="mysql://<user>:<dbpass>@<ip>:<port>/<dbname>"
+
+### `.env.production`
+
+```dotenv
 NODE_ENV="production"
-JWT_SECRET="<jwtsecret>"
+
+# MySQL 초기화에 필요
+MYSQL_DATABASE=wsd_db
+MYSQL_ROOT_PASSWORD=wsdpass
+
+# Nest.js 컨테이너에서 접근
+DATABASE_URL="mysql://root:wsdpass@mysql:3306/wsd_db"
+JWT_SECRET="jwtsecret"
+
+# Redis 설정
 REDIS_HOST=redis
 REDIS_PORT=6379
 ```
 
-### 초기 데이터 주입
+위 환경 변수는 로컬 테스트 용이며, 실제 배포환경은 이와 다릅니다.
 
-- [wsd-hw3-crawling](https://github.com/jinseok1006/wsd-hw3-crawling)을 참고하여 초기 데이터 주입
-- 또는 wsdapp_backup.sql 을 mysql 데이터베이스에 직접 주입
+### `wsdapp_backup.sql`
+
+데이터베이스 백업파일을 프로젝트의 루트경로에 저장하세요.
 
 
-### 빌드 및 실행
+### 실행 명령
+
+다음 명령어로 모든 어플리케이션을 실행합니다:
 
 ```bash
 docker compose up
 ```
 
----
+필요한 이미지를 다운로드하고 컨테이너를 빌드하며, MySQL 초기 데이터(wsdapp_backup.sql)를 데이터베이스에 주입하고 대기하는 과정 때문에 최초 실행 시 **약 5분 정도** 소요됩니다.
+
+
+### 포트 매핑
+
+각 서비스의 포트 매핑 및 접근 방법은 다음과 같습니다:
+
+| 서비스   | 호스트 포트 | 컨테이너 포트 | 설명                                   |
+|----------|-----------|-----------|----------------------------------------|
+| MySQL    | 8080      | 3306      | MySQL 데이터베이스 접근: `localhost:8080` |
+| Redis    | 3000      | 6379      | Redis 캐시 서버 접근: `localhost:6379`   |
+| Nest.js  | 80        | 3000      | Nest.js API 서버 접근: `http://localhost` |
+
+
+위 설정을 통해 한 번의 명령어로 모든 서비스를 실행하고, 각 포트를 통해 서비스를 사용할 수 있습니다.
+
+
 
 ## 배포 및 접근 정보
 
 - **JCloud 배포 URL**: `http://***.***.***.***`
 - **Swagger 문서**: `http://***.***.***.***/swagger`
 
----
 
