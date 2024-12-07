@@ -14,7 +14,6 @@ import { WINSTON_MODULE_NEST_PROVIDER } from "nest-winston";
 import { CreateApplicationResponseDto } from "./dto/create-application-response.dto";
 import { CancelApplicationResponseDto } from "./dto/cancel-application-response.dto";
 import { ApplicationCancellationException } from "src/common/custom-error";
-import { CacheKeyHelper } from "src/common/cache/cache-key-helper";
 import { CacheService } from "src/cache/cache.service";
 
 @Injectable()

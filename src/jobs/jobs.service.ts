@@ -116,6 +116,7 @@ export class JobsService {
         annualFrom: true,
         annualTo: true,
         image: true,
+        salary:true,
         Company: {
           select: {
             id: true,
@@ -225,6 +226,7 @@ export class JobsService {
             name: true,
           },
         },
+        salary:true,
         Bookmark: {
           where: { userId },
           select: {

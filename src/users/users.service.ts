@@ -13,7 +13,6 @@ import {
   EmailAlreadyExistsException,
 } from "src/common/custom-error";
 import { WINSTON_MODULE_NEST_PROVIDER } from "nest-winston";
-import { CacheKeyHelper } from "src/common/cache/cache-key-helper";
 import { CacheService } from "src/cache/cache.service";
 
 /**

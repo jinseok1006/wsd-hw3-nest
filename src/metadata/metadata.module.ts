@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
-import { JobsController } from './jobs.controller';
-import { JobsService } from './jobs.service';
+import { MetadataService } from './metadata.service';
+import { MetadataController } from './metadata.controller';
 import { PrismaModule } from 'src/prisma/prisma.module';
 import { AuthCoreModule } from 'src/auth-core/auth-core.module';
 
 @Module({
   imports: [PrismaModule, AuthCoreModule],
-  controllers: [JobsController],
-  providers: [JobsService]
+  providers: [MetadataService],
+  controllers: [MetadataController]
 })
-export class JobsModule {}
+export class MetadataModule {}
