@@ -13,7 +13,8 @@ export function ApiSuccessResponse(
   dto: any,
   description: string,
   status = HttpStatus.OK,
-  includePagination = false
+  includePagination = false,
+  isArray= false
 ) {
   return applyDecorators(
     ApiExtraModels(dto),
@@ -25,7 +26,7 @@ export function ApiSuccessResponse(
           { $ref: getSchemaPath(SuccessResponseDto) },
           {
             properties: {
-              result: includePagination
+              result: includePagination || isArray
                 ? {
                     type: "array",
                     items: { $ref: getSchemaPath(dto) },
