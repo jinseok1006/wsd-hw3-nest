@@ -40,6 +40,5 @@ services:
     volumes:
       - ./db:/var/lib/mysql
       - ./wsdapp_backup.sql:/docker-entrypoint-initdb.d/wsdapp_backup.sql
-    environment:
-      - MYSQL_DATABASE=wsd_db
-      - MYSQL_ROOT_PASSWORD=wsdpass
+    env_file:
+      - .env.production
