@@ -135,7 +135,7 @@ docker compose up
 | 서비스   | 호스트 포트 | 컨테이너 포트 | 설명                                   |
 |----------|-----------|-----------|----------------------------------------|
 | MySQL    | 8080      | 3306      | MySQL 데이터베이스 접근: `localhost:8080` |
-| Redis    | 3000      | 6379      | Redis 캐시 서버 접근: `localhost:6379`   |
+| Redis    | 3000      | 6379      | Redis 캐시 서버 접근: `localhost:3000`   |
 | Nest.js  | 80        | 3000      | Nest.js API 서버 접근: `http://localhost` |
 
 
