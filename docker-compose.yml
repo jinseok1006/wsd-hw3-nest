@@ -39,6 +39,6 @@ services:
       - 8080:3306
     volumes:
       - ./db:/var/lib/mysql
-      - ./wsdapp_backup.sql:/docker-entrypoint-initdb.d/wsdapp_backup.sql
+      - ./crawled-data.sql:/docker-entrypoint-initdb.d/crawled-data.sql
     env_file:
       - .env.production
