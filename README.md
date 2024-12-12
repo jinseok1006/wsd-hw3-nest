@@ -169,18 +169,9 @@ npm install
 ```
 NODE_ENV="development"
 
-# MySQL 설정
-MYSQL_DATABASE=wsd_db
-MYSQL_USER=root
-MYSQL_PASSWORD=wsdpass
-MYSQL_HOST=localhost
-MYSQL_PORT=3306
-
-# Nest.js 설정
-DATABASE_URL="mysql://root:wsdpass@localhost:3306/wsd_db"
+DATABASE_URL="mysql://<계정명>:<비밀번호>@localhost:3306/<db명>"
 JWT_SECRET="jwtsecret"
 
-# Redis 설정
 REDIS_HOST=localhost
 REDIS_PORT=6379
 ```
