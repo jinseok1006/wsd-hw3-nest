@@ -86,7 +86,7 @@ src/
 
 
 
-## 실행 방법
+## 도커를 이용한 시작 방법
 
 Docker Compose를 사용하여 **Nest.js 앱**, **Redis**, **MySQL 데이터베이스**를 한 번에 실행할 수 있습니다. 이를 위해 아래의 `.env.production` 파일을 프로젝트 루트 디렉토리에 작성하세요.
 
@@ -141,6 +141,75 @@ docker compose up
 
 위 설정을 통해 한 번의 명령어로 모든 서비스를 실행하고, 각 포트를 통해 서비스를 사용할 수 있습니다.
 
+## 베어메탈 시작 방법
+
+- Node.js: 18 버전 설치
+- MySQL: 5.7 버전 설치
+- Redis: 7 버전 설치
+- NestJS CLI 설치:
+```bash
+npm install -g @nestjs/cli
+```
+
+### 1단계: 저장소 클론
+프로젝트 저장소를 로컬 머신에 클론합니다:
+```
+git clone <repository-url>
+cd <project-directory>
+```
+
+### 2단계: 의존성 설치
+다음 명령어로 Node.js 의존성을 설치합니다:
+```
+npm install
+```
+
+### 3단계: 환경 설정
+프로젝트 루트 디렉토리에 .env 파일을 생성하고 아래 내용을 작성합니다:
+```
+NODE_ENV="development"
+
+# MySQL 설정
+MYSQL_DATABASE=wsd_db
+MYSQL_USER=root
+MYSQL_PASSWORD=wsdpass
+MYSQL_HOST=localhost
+MYSQL_PORT=3306
+
+# Nest.js 설정
+DATABASE_URL="mysql://root:wsdpass@localhost:3306/wsd_db"
+JWT_SECRET="jwtsecret"
+
+# Redis 설정
+REDIS_HOST=localhost
+REDIS_PORT=6379
+```
+
+### 4단계: 데이터베이스 설정
+데이터베이스 생성
+```sql
+CREATE DATABASE wsd_db;
+```
+
+초기 데이터 주입
+crawled-data.sql 파일을 wsd_db 데이터베이스에 가져옵니다:
+```
+mysql -u root -p wsd_db < crawled-data.sql
+```
+
+### 5단계: Redis 로컬 실행
+Redis가 로컬에서 실행 중인지 확인합니다. Redis를 시작하려면 다음 명령어를 사용합니다(OS에 따라 다를 수 있음):
+```bash
+redis-server
+```
+
+### 6단계: NestJS 애플리케이션 실행
+아래 명령어로 애플리케이션을 개발 모드에서 실행합니다:
+```bash
+npm run start:dev
+```
+
+서버가 실행되며, API는 http://localhost:3000에서 접근 가능합니다.
 
 
 ## 배포 및 접근 정보
