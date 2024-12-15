@@ -103,7 +103,7 @@ docker compose up -d
 ```
 mysql이 crawled-data.sql을 주입하고 연결을 대기할 때 까지 기다립니다.
 
-이후, 아래 명령어를 실행합니다.
+이후, 아래 명령어로 nest, redis를 실행합니다.
 ```bash
 cd wsd-hw3-nest
 docker compose up -d
