@@ -88,49 +88,56 @@ src/
 
 ## 도커를 이용한 시작 방법
 
-Docker Compose를 사용하여 **Nest.js 앱**, **Redis**, **MySQL 데이터베이스**를 한 번에 실행할 수 있습니다. 이를 위해 아래의 `.env.production` 파일을 프로젝트 루트 디렉토리에 작성하세요.
+Docker Compose를 사용하여 **Nest.js 앱**, **Redis**, **mysql** 를 실행할 수 있습니다. 
 
 
 ### `.env.production`
+아래의 `.env.production` 파일을 프로젝트 루트 디렉토리에 작성하세요.
 
 ```dotenv
 NODE_ENV="production"
 
 # MySQL 초기화에 필요
-MYSQL_DATABASE=wsd_db
-MYSQL_ROOT_PASSWORD=wsdpass
+MYSQL_DATABASE=wsd_db # 접속할 db
+MYSQL_ROOT_PASSWORD=example 
+MYSQL_USER=wsd_user # 접속할 계정
+MYSQL_PASSWORD=wsd_pass # 접속할 비밀번호
 
 # Nest.js 컨테이너에서 접근
-DATABASE_URL="mysql://root:wsdpass@mysql:3306/wsd_db"
+DATABASE_URL="mysql://wsd_user:wsd_pass@db:3306/wsd_db"
 JWT_SECRET="jwtsecret"
 
 # Redis 설정
 REDIS_HOST=redis
 REDIS_PORT=6379
 ```
-
 위 환경 변수는 로컬 테스트 용이며, 실제 배포환경은 이와 다릅니다.
 
-### `crawled-data.sql`
+### crawled_data.sql
 
-데이터베이스 백업파일을 프로젝트의 루트경로에 저장하세요. 데이터베이스 최초 실행시 자동으로 sql 파일을 주입합니다.
-만약 sql파일 없이 컨테이너를 실행했다면, 프로젝트 루트 경로의 db 디렉토리를 삭제한 이후 다시 실행해야합니다.
-
+crawled_data.sql을 wsd-hw3-nest/mysql에 저장하면 데이터베이스를 실행할때
+자동으로 포함하여 초기화합니다.
 
 ### 실행 명령
 
-다음 명령어로 모든 어플리케이션을 실행합니다:
+다음 명령어로 mysql 어플리케이션을 실행합니다:
 
 ```bash
+cd wsd-hw3-nest/mysql
 docker compose up
 ```
 
-필요한 이미지를 다운로드하고 컨테이너를 빌드하며, MySQL 초기 데이터(crawled-data.sql)를 데이터베이스에 주입하고 대기하는 과정 때문에 최초 실행 시 **약 5분 정도** 소요됩니다.
+mysql이 crawled_data.sql을 초기화 한 이후 nest와 redis를 실행합니다.
+```bash
+cd wsd-hw3-nest
+docker compose up
+```
 
 
 ### 포트 매핑
 
 각 서비스의 포트 매핑 및 접근 방법은 다음과 같습니다:
+<img src="https://github.com/user-attachments/assets/eaf4dcf9-72c6-4071-88da-0988882767e2" width="75%" height='auto'> 
 
 | 서비스   | 호스트 포트 | 컨테이너 포트 | 설명                                   |
 |----------|-----------|-----------|----------------------------------------|

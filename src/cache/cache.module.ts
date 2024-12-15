@@ -4,6 +4,8 @@ import { CacheService } from "./cache.service";
 
 import * as redisStore from "cache-manager-redis-store";
 import { ConfigModule, ConfigService } from "@nestjs/config";
+import { APP_INTERCEPTOR } from "@nestjs/core";
+import { GlobalCacheInterceptor } from "src/common/cache/global-cache.interceptor";
 
 @Global()
 @Module({
@@ -20,7 +22,13 @@ import { ConfigModule, ConfigService } from "@nestjs/config";
       }),
     }),
   ],
-  providers: [CacheService],
+  providers: [
+    CacheService,
+    {
+      provide: APP_INTERCEPTOR, // 전역 인터셉터로 등록
+      useClass: GlobalCacheInterceptor,
+    },
+  ],
   exports: [CacheService, NestCacheModule],
 })
 export class CacheModule {}

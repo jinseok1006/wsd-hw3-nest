@@ -7,9 +7,7 @@ import { JobsModule } from "./jobs/jobs.module";
 import { BookmarksModule } from "./bookmarks/bookmarks.module";
 import { ApplicationsModule } from "./applications/applications.module";
 import { ReviewsModule } from "./reviews/reviews.module";
-import { APP_INTERCEPTOR } from "@nestjs/core";
-import { GlobalCacheInterceptor } from "./common/cache/global-cache.interceptor";
-import { MetadataModule } from './metadata/metadata.module';
+import { MetadataModule } from "./metadata/metadata.module";
 
 @Module({
   imports: [
@@ -24,12 +22,7 @@ import { MetadataModule } from './metadata/metadata.module';
     ReviewsModule,
     MetadataModule,
   ],
-  providers: [
-    {
-      provide: APP_INTERCEPTOR, // 전역 인터셉터로 등록
-      useClass: GlobalCacheInterceptor,
-    },
-  ],
+  providers: [],
 })
 export class AppModule {
   // configure(consumer: MiddlewareConsumer) {

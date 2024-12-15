@@ -9,36 +9,22 @@ services:
       - .env.production # 실행 시점에 사용할 환경 변수 주입
     depends_on:
       - redis
-      - mysql
     ports:
       - 80:3000
     volumes:
       - ./logs:/usr/src/app/logs
-    command: >
-      sh -c "
-      dockerize -wait tcp://mysql:3306 -timeout 30s &&
-      sleep 10 &&
-      npm run start:prod 
-      "
-    
+    networks:
+      - wsdapp_db_network # Redis도 동일 네트워크에 추가 가능
 
   redis:
     image: redis:7
     platform: linux/amd64 # 플랫폼을 amd64로 설정
-    container_name: redis
     command: ["redis-server"]
     ports:
       - 3000:6379
+    networks:
+      - wsdapp_db_network # Redis도 동일 네트워크에 추가 가능
 
-  
-  mysql:
-    image: mysql:5.7
-    platform: linux/amd64 # 플랫폼을 amd64로 설정
-    container_name: mysql
-    ports:
-      - 8080:3306
-    volumes:
-      - ./db:/var/lib/mysql
-      - ./crawled-data.sql:/docker-entrypoint-initdb.d/crawled-data.sql
-    env_file:
-      - .env.production
+networks:
+  wsdapp_db_network:
+    external: true # 외부 네트워크(MySQL 네트워크) 사용

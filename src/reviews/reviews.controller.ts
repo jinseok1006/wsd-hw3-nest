@@ -67,8 +67,8 @@ export class ReviewsController {
     HttpStatus.OK,
     true
   )
-  @ApiOperation({ summary: "회사 리뷰 조회" })
   @ApiCommonErrorResponses({ badRequest: true, unauthorized: true })
+  @ApiOperation({ summary: "회사 리뷰 조회" })
   async getCompanyReviews(
     @Param("companyId") companyId: number,
     @Query() query: GetCompanyReviewsQueryDto

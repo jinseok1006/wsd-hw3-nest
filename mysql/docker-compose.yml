@@ -1,0 +1,17 @@
+services:
+  db:
+    platform: linux/amd64 # 플랫폼을 amd64로 설정
+    image: mysql:5.7
+    ports:
+      - 8080:3306
+    volumes:
+      - ./db:/var/lib/mysql
+      - ./crawled-data.sql:/docker-entrypoint-initdb.d/crawled-data.sql
+    env_file:
+      - ../.env.production
+    networks:
+      - wsdapp_db_network
+
+networks:
+  wsdapp_db_network:
+    name: wsdapp_db_network
