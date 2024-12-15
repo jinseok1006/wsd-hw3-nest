@@ -99,13 +99,14 @@ crawled-data.sql을 wsd-hw3-nest/mysql에 저장하면 데이터베이스를 실
 
 ```bash
 cd wsd-hw3-nest/mysql
-docker compose up
+docker compose up -d
 ```
+mysql이 crawled-data.sql을 주입하고 연결을 대기할 때 까지 기다립니다.
 
-mysql이 **crawled-data.sql을 주입 한 이후** nest와 redis를 실행합니다.
+이후, 아래 명령어를 실행합니다.
 ```bash
 cd wsd-hw3-nest
-docker compose up
+docker compose up -d
 ```
 
 
