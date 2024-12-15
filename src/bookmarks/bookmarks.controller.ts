@@ -32,8 +32,16 @@ export class BookmarksController {
   // TODO: 응답 DTO 정의
   @Post()
   @ApiBearerAuth()
-  @ApiSuccessResponse(BookmarkResponseDto, "채용공고 즐겨찾기 추가/제거 성공", HttpStatus.OK)
-  @ApiCommonErrorResponses({ badRequest: true, unauthorized: true })
+  @ApiSuccessResponse(
+    BookmarkResponseDto,
+    "채용공고 즐겨찾기 추가/제거 성공",
+    HttpStatus.OK
+  )
+  @ApiCommonErrorResponses({
+    badRequest: true,
+    unauthorized: true,
+    notFound: true,
+  })
   @ApiOperation({ summary: "채용공고 북마크 추가/제거" })
   async toggleBookmark(
     @Request() req,
