@@ -88,9 +88,9 @@ REDIS_PORT=6379
 ```
 위 환경 변수는 로컬 테스트 용이며, 실제 배포환경은 이와 다릅니다.
 
-### crawled_data.sql
+### crawled-data.sql
 
-crawled_data.sql을 wsd-hw3-nest/mysql에 저장하면 데이터베이스를 실행할때
+crawled-data.sql을 wsd-hw3-nest/mysql에 저장하면 데이터베이스를 실행할때
 자동으로 포함하여 초기화합니다.
 
 ### 실행 명령
@@ -102,7 +102,7 @@ cd wsd-hw3-nest/mysql
 docker compose up
 ```
 
-mysql이 **crawled_data.sql을 주입 한 이후** nest와 redis를 실행합니다.
+mysql이 **crawled-data.sql을 주입 한 이후** nest와 redis를 실행합니다.
 ```bash
 cd wsd-hw3-nest
 docker compose up
