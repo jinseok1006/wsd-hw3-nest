@@ -63,6 +63,7 @@ export class ApplicationsService {
         jobPostingId: true,
         status: true,
         appliedAt: true,
+        resume: true,
       },
     });
   }
