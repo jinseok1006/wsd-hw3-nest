@@ -7,7 +7,6 @@ import {
   Query,
   Req,
   UseGuards,
-  UseInterceptors,
 } from "@nestjs/common";
 import { ApiBearerAuth, ApiOperation, ApiParam, ApiTags } from "@nestjs/swagger";
 import { JobsService } from "./jobs.service";
@@ -19,7 +18,6 @@ import { JwtAuthGuard } from "src/common/jwt-auth.guard";
 import { ApiSuccessResponse } from "src/utils/api-success-response.decorator";
 import { ApiCommonErrorResponses } from "src/common/api-response.decorator";
 import { SkipGlobalCache } from "src/common/cache/skip-global-cache.decorator";
-import { UserCacheInterceptor } from "src/common/cache/user-cache.interceptor";
 
 @ApiTags("Jobs")
 @UseGuards(JwtAuthGuard)
@@ -29,7 +27,6 @@ export class JobsController {
 
   @Get()
   @SkipGlobalCache()
-  @UseInterceptors(UserCacheInterceptor)
   @ApiBearerAuth()
   @ApiSuccessResponse(GetJobsResponseDto, "채용공고 전체 조회", HttpStatus.OK, true)
   @ApiCommonErrorResponses({ badRequest: true, unauthorized: true })
@@ -45,7 +42,6 @@ export class JobsController {
 
   @Get(":id")
   @SkipGlobalCache()
-  @UseInterceptors(UserCacheInterceptor)
   @ApiBearerAuth()
   @ApiParam({ name: "id", type: Number, description: "Job ID" })
   @ApiSuccessResponse(GetJobsDetailResponseDto, "채용공고 상세 조회")
