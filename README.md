@@ -184,10 +184,91 @@ npm run start:dev
 
 서버가 실행되며, API는 http://localhost:3000에서 접근 가능합니다.
 
+### API 엔드포인트 간단 정리
 
-## 배포 및 접근 정보
+#### **인증 Auth**
+1. **회원가입**  
+   - `POST /auth/register`  
+   - 회원가입 처리 이메일, 비밀번호, 이름 필요
 
-- **JCloud 배포 URL**: `http://***.***.***.***`
-- **Swagger 문서**: `http://***.***.***.***/swagger`
+2. **로그인**  
+   - `POST /auth/login`  
+   - 로그인 및 토큰 발급 이메일, 비밀번호 필요
 
+3. **토큰 갱신**  
+   - `POST /auth/refresh`  
+   - 리프레시 토큰으로 새 토큰 발급
 
+4. **프로필 조회**  
+   - `GET /auth/profile`  
+   - 사용자 정보 조회 로그인 필요
+
+5. **프로필 수정**  
+   - `PUT /auth/profile`  
+   - 사용자 정보 수정 로그인 필요
+
+---
+
+#### **채용공고 Jobs**
+1. **공고 목록 조회**  
+   - `GET /jobs`  
+   - 필터 및 정렬을 통한 공고 조회
+
+2. **공고 상세 조회**  
+   - `GET /jobs/{id}`  
+   - 특정 공고 상세 정보 조회
+
+---
+
+#### **북마크 Bookmarks**
+1. **북마크 추가/제거**  
+   - `POST /bookmarks`  
+   - 공고 북마크 추가 또는 제거
+
+2. **북마크 목록 조회**  
+   - `GET /bookmarks`  
+   - 북마크한 공고 목록 조회
+
+---
+
+#### **지원서 Applications**
+1. **지원서 작성**  
+   - `POST /applications`  
+   - 특정 공고에 지원서 제출
+
+2. **지원서 목록 조회**  
+   - `GET /applications`  
+   - 지원한 공고 목록 조회
+
+3. **지원서 취소**  
+   - `DELETE /applications/{id}`  
+   - 특정 지원 취소
+
+---
+
+#### **리뷰 Reviews**
+1. **리뷰 작성**  
+   - `POST /reviews`  
+   - 회사 리뷰 작성
+
+2. **회사 리뷰 조회**  
+   - `GET /reviews/{companyId}`  
+   - 특정 회사의 리뷰 목록 조회
+
+3. **리뷰 삭제**  
+   - `DELETE /reviews/{reviewId}`  
+   - 작성한 리뷰 삭제
+
+---
+
+#### **메타데이터 Metadata**
+1. **개발자 직무 조회**  
+   - `GET /metadata/developer-positions`  
+   - 직무 리스트 조회
+
+2. **기술 스택 조회**  
+   - `GET /metadata/tech-stacks`  
+   - 기술 스택 리스트 조회
+
+자세한 사항은 `/swagger` 엔드포인트를 참조하십시오.
+---
