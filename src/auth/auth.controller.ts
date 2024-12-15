@@ -60,7 +60,7 @@ export class AuthController {
 
   @Post("login")
   @ApiCommonErrorResponses({ badRequest: true, unauthorized: true })
-  @ApiSuccessResponse(LoginResponseDto, "로그인 성공")
+  @ApiSuccessResponse(LoginResponseDto, "로그인 성공", HttpStatus.CREATED)
   @ApiOperation({ summary: "로그인" })
   async login(
     @Body() body: LoginDto
@@ -111,7 +111,7 @@ export class AuthController {
 
   @Post("refresh")
   @ApiCommonErrorResponses({ badRequest: true, unauthorized: true })
-  @ApiSuccessResponse(LoginResponseDto, "리프레시 토큰 발급 성공")
+  @ApiSuccessResponse(LoginResponseDto, "리프레시 토큰 발급 성공", HttpStatus.CREATED)
   @ApiOperation({ summary: "리프레시 토큰 발급" })
   async refreshToken(
     @Body() body: RefreshTokenRequestDto
