@@ -7,15 +7,18 @@ import { WINSTON_MODULE_PROVIDER } from "nest-winston";
 import { PrismaExceptionFilter } from "./exception/prisma-exception.filter";
 import { Request, Response } from "express";
 import { PaginationDto, SuccessResponseDto } from "./common/response.dto";
+import * as morgan from 'morgan';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     bufferLogs: true,
   });
 
+  const logger = app.get(WINSTON_MODULE_PROVIDER);
+
   app.useGlobalFilters(
-    new HttpExceptionFilter(app.get(WINSTON_MODULE_PROVIDER)),
-    new PrismaExceptionFilter(app.get(WINSTON_MODULE_PROVIDER))
+    new HttpExceptionFilter(logger),
+    new PrismaExceptionFilter(logger)
   );
   app.useGlobalPipes(
     new ValidationPipe({
@@ -25,8 +28,15 @@ async function bootstrap() {
       },
     })
   );
-
   // app.useGlobalInterceptors(new ResponseInterceptor());
+  
+  app.use(
+    morgan('combined', {
+      stream: {
+        write: (message: string) => logger.info(message.trim()), // winston의 info 레벨로 전달
+      },
+    }),
+  );
 
   // Swagger 설정
   const config = new DocumentBuilder()
