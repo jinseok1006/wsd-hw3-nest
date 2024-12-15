@@ -43,7 +43,7 @@ export class ApplicationsService {
       where: { id: jobPostingId },
     });
 
-    if(jobPosting === null) {
+    if (jobPosting === null) {
       throw new NotFoundException("해당 채용 공고를 찾을 수 없습니다.");
     }
 
@@ -52,19 +52,24 @@ export class ApplicationsService {
       where: { userId_jobPostingId: { userId, jobPostingId } },
     });
 
-    if (existingApplication) {
+    if (existingApplication && existingApplication.status !== "CANCELED") {
       throw new ConflictException("이미 지원한 공고입니다.");
     }
 
     // 캐시제거
     this.cacheService.invalidateApplicationsCache(userId);
 
-    return this.prisma.application.create({
-      data: {
+    return this.prisma.application.upsert({
+      where: { userId_jobPostingId: { userId, jobPostingId } },
+      update: {
+        resume,
+        status: "PENDING", // 상태를 PENDING으로 업데이트
+      },
+      create: {
         userId,
         jobPostingId,
         resume,
-        status: "PENDING",
+        status: "PENDING", // 새로운 레코드 생성
       },
       select: {
         id: true,
@@ -156,7 +161,6 @@ export class ApplicationsService {
 
     // 캐시제거
     this.cacheService.invalidateApplicationsCache(userId);
-
 
     return {
       id: updatedApplication.id,
