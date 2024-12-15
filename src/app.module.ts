@@ -8,6 +8,7 @@ import { BookmarksModule } from "./bookmarks/bookmarks.module";
 import { ApplicationsModule } from "./applications/applications.module";
 import { ReviewsModule } from "./reviews/reviews.module";
 import { MetadataModule } from "./metadata/metadata.module";
+import { CompaniesModule } from './companies/companies.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { MetadataModule } from "./metadata/metadata.module";
     ApplicationsModule,
     ReviewsModule,
     MetadataModule,
+    CompaniesModule,
   ],
   providers: [],
 })
