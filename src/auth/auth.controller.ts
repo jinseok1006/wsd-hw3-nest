@@ -23,7 +23,12 @@ import { LoginDto } from "./dto/login.dto";
 import { AuthService } from "./auth.service";
 import { RegisterDto } from "./dto/register.dto";
 import { RefreshTokenRequestDto } from "./dto/refresh-token-request.dto";
-import { ApiBearerAuth, ApiExtraModels, ApiOperation, ApiTags } from "@nestjs/swagger";
+import {
+  ApiBearerAuth,
+  ApiExtraModels,
+  ApiOperation,
+  ApiTags,
+} from "@nestjs/swagger";
 import { UpdateUserDto } from "src/users/dto/update-user.dto"; // UpdateUserDto 임포트
 import { ApiSuccessResponse } from "src/utils/api-success-response.decorator";
 import { SkipGlobalCache } from "src/common/cache/skip-global-cache.decorator";
@@ -37,7 +42,7 @@ export class AuthController {
     @Inject(WINSTON_MODULE_NEST_PROVIDER)
     private readonly logger: LoggerService,
     private readonly usersService: UsersService,
-    private readonly authService: AuthService,
+    private readonly authService: AuthService
   ) {}
 
   @Post("register")
@@ -91,7 +96,7 @@ export class AuthController {
   @Put("profile")
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  @ApiCommonErrorResponses({badRequest: true, unauthorized: true})
+  @ApiCommonErrorResponses({ badRequest: true, unauthorized: true })
   @ApiSuccessResponse(UserResponseDto, "프로필 업데이트 성공")
   @ApiOperation({ summary: "프로필 업데이트" })
   async updateProfile(
@@ -105,7 +110,7 @@ export class AuthController {
   }
 
   @Post("refresh")
-  @ApiCommonErrorResponses({ badRequest: true })
+  @ApiCommonErrorResponses({ badRequest: true, unauthorized: true })
   @ApiSuccessResponse(LoginResponseDto, "리프레시 토큰 발급 성공")
   @ApiOperation({ summary: "리프레시 토큰 발급" })
   async refreshToken(

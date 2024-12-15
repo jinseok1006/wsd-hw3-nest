@@ -184,9 +184,9 @@ npm run start:dev
 
 서버가 실행되며, API는 http://localhost:3000에서 접근 가능합니다.
 
-### API 엔드포인트 간단 정리
+## API 엔드포인트 간단 정리
 
-#### **인증 Auth**
+### **인증 Auth**
 1. **회원가입**  
    - `POST /auth/register`  
    - 회원가입 처리 이메일, 비밀번호, 이름 필요
@@ -209,7 +209,7 @@ npm run start:dev
 
 ---
 
-#### **채용공고 Jobs**
+### **채용공고 Jobs**
 1. **공고 목록 조회**  
    - `GET /jobs`  
    - 필터 및 정렬을 통한 공고 조회
@@ -220,7 +220,7 @@ npm run start:dev
 
 ---
 
-#### **북마크 Bookmarks**
+### **북마크 Bookmarks**
 1. **북마크 추가/제거**  
    - `POST /bookmarks`  
    - 공고 북마크 추가 또는 제거
@@ -231,7 +231,7 @@ npm run start:dev
 
 ---
 
-#### **지원서 Applications**
+### **지원서 Applications**
 1. **지원서 작성**  
    - `POST /applications`  
    - 특정 공고에 지원서 제출
@@ -246,7 +246,7 @@ npm run start:dev
 
 ---
 
-#### **리뷰 Reviews**
+### **리뷰 Reviews**
 1. **리뷰 작성**  
    - `POST /reviews`  
    - 회사 리뷰 작성
@@ -261,7 +261,7 @@ npm run start:dev
 
 ---
 
-#### **메타데이터 Metadata**
+### **메타데이터 Metadata**
 1. **개발자 직무 조회**  
    - `GET /metadata/developer-positions`  
    - 직무 리스트 조회
