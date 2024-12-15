@@ -271,4 +271,10 @@ npm run start:dev
    - `GET /metadata/tech-stacks`  
    - 기술 스택 리스트 조회
 
+### **기업 Companies**
+1. **기업 조회**  
+   - `GET /companies`  
+   - 기업 리스트 조회
+
+
 자세한 사항은 `/swagger` 엔드포인트를 참조하십시오.
