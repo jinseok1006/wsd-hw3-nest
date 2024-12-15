@@ -57,6 +57,13 @@ export class ApplicationsService {
         resume,
         status: "PENDING",
       },
+      select: {
+        id: true,
+        userId: true,
+        jobPostingId: true,
+        status: true,
+        appliedAt: true,
+      },
     });
   }
 
