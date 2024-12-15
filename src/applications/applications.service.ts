@@ -38,6 +38,15 @@ export class ApplicationsService {
   ): Promise<CreateApplicationResponseDto> {
     const { jobPostingId, resume } = createApplicationDto;
 
+    // 존재하는 jobPostingId인지 확인
+    const jobPosting = await this.prisma.jobPosting.findUnique({
+      where: { id: jobPostingId },
+    });
+
+    if(jobPosting === null) {
+      throw new NotFoundException("해당 채용 공고를 찾을 수 없습니다.");
+    }
+
     // 중복 지원 여부 확인
     const existingApplication = await this.prisma.application.findUnique({
       where: { userId_jobPostingId: { userId, jobPostingId } },

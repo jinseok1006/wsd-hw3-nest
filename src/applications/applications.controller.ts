@@ -76,13 +76,13 @@ export class ApplicationsController {
   @UseGuards(JwtAuthGuard) // 인증 미들웨어
   @ApiBearerAuth()
   @ApiParam({ name: "id", type: Number, description: "지원 취소할 지원서 ID" })
-  @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiSuccessResponse(
-    CancelApplicationResponseDto,
-    "지원서 취소 성공",
-    HttpStatus.NO_CONTENT
-  )
-  @ApiCommonErrorResponses({ badRequest: true, unauthorized: true })
+  @ApiSuccessResponse(CancelApplicationResponseDto, "지원서 취소 성공")
+  @ApiCommonErrorResponses({
+    badRequest: true,
+    unauthorized: true,
+    notFound: true,
+    forbidden: true,
+  })
   @ApiOperation({ summary: "지원서 취소" })
   async cancelApplication(
     @Req() req,

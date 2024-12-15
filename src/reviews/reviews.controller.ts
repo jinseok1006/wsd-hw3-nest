@@ -90,7 +90,11 @@ export class ReviewsController {
     "리뷰 삭제 성공",
     HttpStatus.NO_CONTENT
   )
-  @ApiCommonErrorResponses({ badRequest: true, unauthorized: true })
+  @ApiCommonErrorResponses({
+    badRequest: true,
+    unauthorized: true,
+    forbidden: true,
+  })
   @ApiOperation({ summary: "회사 리뷰 삭제" })
   async deleteReview(
     @Req() req,

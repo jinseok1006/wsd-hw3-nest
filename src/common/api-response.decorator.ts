@@ -4,6 +4,7 @@ import {
   ApiBadRequestResponse,
   ApiNotFoundResponse,
   ApiUnauthorizedResponse,
+  ApiForbiddenResponse,
 } from "@nestjs/swagger";
 import { ErrorResponseDto } from "./response.dto";
 
@@ -12,6 +13,7 @@ export function ApiCommonErrorResponses(options: {
   badRequest?: boolean;
   notFound?: boolean;
   unauthorized?: boolean;
+  forbidden?: boolean;
 } = {}) {
   const decorators = [];
 
@@ -60,6 +62,21 @@ export function ApiCommonErrorResponses(options: {
     );
   }
 
+  if (options.forbidden) {
+    decorators.push(
+      ApiForbiddenResponse({
+        type: ErrorResponseDto,
+        description: "Forbidden",
+        example: {
+          success: false,
+          message: ["error message"],
+          error: "Forbidden",
+          statusCode: 403,
+        },
+      })
+    );
+  }
+
   if (options.unauthorized) {
     decorators.push(
       ApiUnauthorizedResponse({
@@ -74,6 +91,7 @@ export function ApiCommonErrorResponses(options: {
       })
     );
   }
+
 
   return applyDecorators(...decorators);
 }

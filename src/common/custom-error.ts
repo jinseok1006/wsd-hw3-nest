@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ConflictException,
   ForbiddenException,
   NotFoundException,
   UnauthorizedException,
@@ -35,7 +36,7 @@ export class PermissionDeniedException extends ForbiddenException {
   }
 }
 
-export class EmailAlreadyExistsException extends BadRequestException {
+export class EmailAlreadyExistsException extends ConflictException {
   constructor(message?: string) {
     super(message || "이미 사용 중인 이메일입니다.");
   }
