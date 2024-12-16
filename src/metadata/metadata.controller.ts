@@ -6,6 +6,7 @@ import { ApiSuccessResponse } from "src/utils/api-success-response.decorator";
 import { ApiBearerAuth, ApiOperation } from "@nestjs/swagger";
 import { SuccessResponseDto } from "src/common/response.dto";
 import { JwtAuthGuard } from "src/common/jwt-auth.guard";
+import { ApiCommonErrorResponses } from "src/common/api-response.decorator";
 
 @Controller("metadata")
 export class MetadataController {
@@ -16,6 +17,7 @@ export class MetadataController {
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @ApiSuccessResponse(DeveloperPositionDto, "조회 성공", HttpStatus.OK, false, true)
+  @ApiCommonErrorResponses({unauthorized:true})
   @ApiOperation({ summary: "개발자 직무 리스트" })
   async getDeveloperPositions(): Promise<
     SuccessResponseDto<DeveloperPositionDto[]>
@@ -29,6 +31,7 @@ export class MetadataController {
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @ApiSuccessResponse(TechStackDto, "조회 성공", HttpStatus.OK, false, true)
+  @ApiCommonErrorResponses({unauthorized:true})
   @ApiOperation({ summary: "기술 스택 리스트" })
   async getTechStacks(): Promise<SuccessResponseDto<TechStackDto[]>> {
     const successResponse = await this.filtersService.getTechStacks();
